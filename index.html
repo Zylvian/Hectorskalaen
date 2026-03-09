@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hectorskalaen – Bar Smell Index (Bergen)</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-root">
+      <header class="app-header">
+        <div class="header-main">
+          <h1>Hectorskalaen</h1>
+          <p class="tagline">
+            Follow your nose through Bergen’s bar scene – as rated on the Hectorskalaen.
+          </p>
+        </div>
+        <div class="header-controls">
+          <div class="search-group">
+            <label for="searchInput">Search bars</label>
+            <input
+              type="search"
+              id="searchInput"
+              placeholder="Type a bar name…"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <section class="panel panel-list">
+          <header class="panel-header panel-header-list">
+            <div>
+              <h2>Bars in Bergen</h2>
+              <p id="resultsSummary" class="results-summary">
+                Discover how Bergen’s bars rank on the Hectorskalaen.
+              </p>
+            </div>
+            <div class="list-actions">
+              <div class="view-toggle-group" aria-label="Change layout" role="group">
+                <button
+                  id="viewGrid"
+                  class="btn-ghost btn-toggle btn-toggle--active"
+                  type="button"
+                >
+                  Grid
+                </button>
+                <button id="viewList" class="btn-ghost btn-toggle" type="button">
+                  List
+                </button>
+              </div>
+              <button id="sortToggle" class="btn-ghost" type="button">
+                Sort: smell high → low
+              </button>
+            </div>
+          </header>
+
+          <div class="bars-scroll-wrapper">
+            <ul id="barsList" class="bars-list"></ul>
+          </div>
+        </section>
+      </main>
+
+      <footer class="app-footer">
+        <p>
+          Mama mia!
+        </p>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+
