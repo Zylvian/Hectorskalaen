@@ -4,6 +4,7 @@
    * @property {string} title
    * @property {number} rating
    * @property {string | null} picture
+   * @property {string | null} description
    */
 
   /** @type {Bar[]} */
@@ -48,6 +49,13 @@
     const titleEl = document.createElement("h3");
     titleEl.className = "bar-title";
     titleEl.textContent = bar.title;
+
+    if (bar.description && bar.description.trim().length > 0) {
+      const desc = document.createElement("p");
+      desc.className = "bar-description";
+      desc.textContent = bar.description;
+      info.appendChild(desc);
+    }
 
     const meta = document.createElement("div");
     meta.className = "bar-meta";
@@ -154,6 +162,11 @@
           picture:
             typeof item.picture === "string" && item.picture.length > 0
               ? item.picture
+              : null,
+          description:
+            typeof item.description === "string" &&
+            item.description.trim().length > 0
+              ? item.description.trim()
               : null,
         }));
     } catch (err) {

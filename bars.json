@@ -1,18 +1,21 @@
 [
   {
-    "title": "Hectors Hybel",
-    "rating": 9,
-    "picture": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/16/83/07/hectors-hybel.jpg?w=1200&h=-1&s=1"
+    "title": "Gamle Hectors Hybel",
+    "rating": 10,
+    "picture": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/16/83/07/hectors-hybel.jpg?w=1200&h=-1&s=1",
+    "description": "A legendary student bar with a smell that has seen generations of Bergen nights."
   },
   {
-    "title": "Garage",
-    "rating": 7,
-    "picture": ""
+    "title": "Kråken",
+    "rating": 3,
+    "picture": "https://s3-media0.fl.yelpcdn.com/bphoto/5yDhWcWcvfl56vz8KXzKZA/348s.jpg",
+    "description": "Cozy and a bit scruffy – the smell is present, but not overpowering."
   },
   {
     "title": "Kulturhuset i Bergen",
-    "rating": 4,
-    "picture": ""
+    "rating": 2,
+    "picture": "",
+    "description": ""
   }
 ]
 
