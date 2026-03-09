@@ -31,7 +31,7 @@
   },
   {
     "title": "Gamle fotballpubben",
-    "rating": 10,
+    "rating": 9,
     "picture": "https://premium.vgc.no/v2/images/826c7e18-5984-4a7f-8c55-cd96b03fe033?fit=crop&format=auto&h=1296&w=1900&s=b77d62098c176b117cc4fed86d92e1459b3f46dc",
     "description": "Angst, Vikingfjord og nylig skilsmisse."
   },
@@ -46,6 +46,13 @@
     "rating": 6,
     "picture": "https://photos.smugmug.com/Debates/2018/Politisk-Aften-i-Gr%C3%B8ndahls/i-p3Tmn7J/2/MDF5kZK3kmmBvsSCSvtPsLjrnMDW6zLBDbGZghFJJ/L/IMG_1210-L.jpg",
     "description": "Litt mer svettelukt enn de fleste andre lokasjoner."
+  },
+  {
+  "title": "Folk & Røvere",
+  "rating": 9,
+  "picture": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/1a/95/3b/caption.jpg?w=1200&h=1200&s=1",
+  "description": "Ha med deg gassmaske og chastity belt."
   }
+  
 ]
 
