@@ -420,8 +420,22 @@ body {
     width: 100%;
   }
 
+  .bars-list--grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bar-card--grid {
+    aspect-ratio: auto;
+  }
+
+  .bar-media {
+    aspect-ratio: auto;
+  }
+
   .bar-image {
-    height: 170px;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
   }
 }
 

@@ -11,7 +11,7 @@
   let bars = [];
   let searchQuery = "";
   let sortMode = "random"; // "random" | "desc" | "asc"
-  let viewMode = "list"; // "grid" | "list"
+  let viewMode = "grid"; // "grid" | "list"
 
   const searchInput = document.getElementById("searchInput");
   const barsList = /** @type {HTMLUListElement | null} */ (
@@ -78,14 +78,14 @@
     titleEl.className = "bar-title";
     titleEl.textContent = bar.title;
 
+    info.appendChild(titleEl);
+
     if (bar.description && bar.description.trim().length > 0) {
       const desc = document.createElement("p");
       desc.className = "bar-description";
       desc.textContent = bar.description;
       info.appendChild(desc);
     }
-
-    info.appendChild(titleEl);
     li.appendChild(media);
     li.appendChild(info);
 
