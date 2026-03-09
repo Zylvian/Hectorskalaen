@@ -269,6 +269,12 @@ body {
   min-width: 0;
 }
 
+.bar-description {
+  margin: 2px 0 6px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
 .bar-title {
   margin: 0 0 4px;
   font-weight: 600;
