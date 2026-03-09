@@ -5,7 +5,8 @@
 "description": "Hectorskalaen – a small static web page that lists bars in Bergen on a 1–10 smell scale.",
 "private": true,
 "scripts": { 
-    "start": "sirv ./src public --cors --single --no-clear --port 8000"
+    "start": "sirv ./src public --cors --single --no-clear --port 8000",
+    "build": "echo \"Static site – nothing to build\""
 },
 "keywords": [
     "bergen",
