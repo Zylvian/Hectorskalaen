@@ -11,7 +11,7 @@
   let bars = [];
   let searchQuery = "";
   let sortDescending = true;
-  let viewMode = "grid"; // "grid" | "list"
+  let viewMode = "list"; // "grid" | "list"
 
   const searchInput = document.getElementById("searchInput");
   const barsList = /** @type {HTMLUListElement | null} */ (
@@ -115,7 +115,7 @@
     } else if (normalizedQuery) {
       resultsSummary.textContent = `${visible} of ${total} bars match “${searchQuery.trim()}”.`;
     } else {
-      resultsSummary.textContent = `${visible} bar${visible === 1 ? "" : "s"} on the Hectorskalaen.`;
+      resultsSummary.textContent = `${visible} bar${visible === 1 ? "" : "er"} er på Hectorskalaen.`;
     }
 
     barsList.innerHTML = "";

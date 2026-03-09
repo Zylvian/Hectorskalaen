@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hectorskalaen – Bar Smell Index (Bergen)</title>
+    <title>Hectorskalaen – Hvor Shitty Lukter Denne Bergenske Baren?</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -13,16 +13,16 @@
         <div class="header-main">
           <h1>Hectorskalaen</h1>
           <p class="tagline">
-            Follow your nose through Bergen’s bar scene – as rated on the Hectorskalaen.
+            Hectorskalaen er en skala fra 1-10 på hvor dårlig en bar i Bergen lukter.
           </p>
         </div>
         <div class="header-controls">
           <div class="search-group">
-            <label for="searchInput">Search bars</label>
+            <label for="searchInput">Søk etter bar</label>
             <input
               type="search"
               id="searchInput"
-              placeholder="Type a bar name…"
+              placeholder="Søk…"
               autocomplete="off"
             />
           </div>
@@ -33,7 +33,7 @@
         <section class="panel panel-list">
           <header class="panel-header panel-header-list">
             <div>
-              <h2>Bars in Bergen</h2>
+              <h2>Barer i Bergen</h2>
               <p id="resultsSummary" class="results-summary">
                 Discover how Bergen’s bars rank on the Hectorskalaen.
               </p>
@@ -42,12 +42,16 @@
               <div class="view-toggle-group" aria-label="Change layout" role="group">
                 <button
                   id="viewGrid"
-                  class="btn-ghost btn-toggle btn-toggle--active"
+                  class="btn-ghost btn-toggle"
                   type="button"
                 >
                   Grid
                 </button>
-                <button id="viewList" class="btn-ghost btn-toggle" type="button">
+                <button
+                  id="viewList"
+                  class="btn-ghost btn-toggle btn-toggle--active"
+                  type="button"
+                >
                   List
                 </button>
               </div>
