@@ -15,7 +15,31 @@
     "title": "Kulturhuset i Bergen",
     "rating": 2,
     "picture": "https://images.squarespace-cdn.com/content/v1/5e3558b2fb55d365939bc5a4/9670f26b-6b00-48e8-a76f-a5086508018a/aec-1.jpg",
-    "description": "eh men dyr mat tho"
+    "description": "eh men dyr mat tho."
+  },
+  {
+    "title": "Henrik øl- og vinstove",
+    "rating": 2,
+    "picture": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2c/a8/34/f5/caption.jpg?w=900&h=500&s=1",
+    "description": "Mild lukt til en beroligende atmosfære."
+  },
+  {
+    "title": "Rævadilter",
+    "rating": 8,
+    "picture": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQrvebtcz0vKpIJbFM677N4OtMr8FWes_7Sw&s",
+    "description": "Mer parfyme enn oksygen."
+  },
+  {
+    "title": "Gamle fotballpubben",
+    "rating": 10,
+    "picture": "https://premium.vgc.no/v2/images/826c7e18-5984-4a7f-8c55-cd96b03fe033?fit=crop&format=auto&h=1296&w=1900&s=b77d62098c176b117cc4fed86d92e1459b3f46dc",
+    "description": "Angst, Vikingfjord og nylig skilsmisse."
+  },
+  {
+    "title": "Legal",
+    "rating": 5,
+    "picture": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU60HWwf4e9KdNNiQ-T-D5XEVQFBjVvm4n0g&s",
+    "description": "Mulig mugg og lite luft."
   }
 ]
 

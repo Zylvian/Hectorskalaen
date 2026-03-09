@@ -10,7 +10,7 @@
   /** @type {Bar[]} */
   let bars = [];
   let searchQuery = "";
-  let sortDescending = true;
+  let sortMode = "random"; // "random" | "desc" | "asc"
   let viewMode = "list"; // "grid" | "list"
 
   const searchInput = document.getElementById("searchInput");
@@ -21,6 +21,15 @@
   const sortToggle = document.getElementById("sortToggle");
   const viewGridBtn = document.getElementById("viewGrid");
   const viewListBtn = document.getElementById("viewList");
+
+  function shuffleInPlace(array) {
+    for (let i = array.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = array[i];
+      array[i] = array[j];
+      array[j] = tmp;
+    }
+  }
 
   function ratingLabel(rating) {
     if (rating >= 8) return "legendary";
@@ -103,10 +112,12 @@
       );
     }
 
-    filtered = [...filtered].sort((a, b) => {
-      const diff = a.rating - b.rating;
-      return sortDescending ? -diff : diff;
-    });
+    filtered = [...filtered];
+    if (sortMode === "desc" || sortMode === "asc") {
+      filtered.sort((a, b) =>
+        sortMode === "desc" ? b.rating - a.rating : a.rating - b.rating
+      );
+    }
 
     const total = bars.length;
     const visible = filtered.length;
@@ -169,6 +180,8 @@
               ? item.description.trim()
               : null,
         }));
+
+      shuffleInPlace(bars);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.warn("Error loading bars from bars.json", err);
@@ -184,10 +197,13 @@
     }
     if (sortToggle) {
       sortToggle.addEventListener("click", () => {
-        sortDescending = !sortDescending;
-        sortToggle.textContent = sortDescending
-          ? "Sort: smell high → low"
-          : "Sort: smell low → high";
+        if (sortMode === "random" || sortMode === "asc") {
+          sortMode = "desc";
+          sortToggle.textContent = "Sort: smell high → low";
+        } else {
+          sortMode = "asc";
+          sortToggle.textContent = "Sort: smell low → high";
+        }
         render();
       });
     }
