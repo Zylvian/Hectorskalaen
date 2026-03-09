@@ -43,6 +43,9 @@
     const li = document.createElement("li");
     li.className = "bar-card";
 
+    const media = document.createElement("div");
+    media.className = "bar-media";
+
     const image = document.createElement("img");
     image.className = "bar-image";
     if (bar.picture) {
@@ -51,6 +54,22 @@
     } else {
       image.alt = `Photo of ${bar.title}`;
     }
+
+    const overlay = document.createElement("div");
+    overlay.className = "bar-rating-overlay";
+
+    const overlayNumber = document.createElement("span");
+    overlayNumber.className = "bar-rating-overlay-number";
+    overlayNumber.textContent = String(bar.rating);
+
+    const overlayLabel = document.createElement("span");
+    overlayLabel.className = "bar-rating-overlay-label";
+    overlayLabel.textContent = "/10";
+
+    overlay.appendChild(overlayNumber);
+    overlay.appendChild(overlayLabel);
+    media.appendChild(image);
+    media.appendChild(overlay);
 
     const info = document.createElement("div");
     info.className = "bar-info";
@@ -66,33 +85,8 @@
       info.appendChild(desc);
     }
 
-    const meta = document.createElement("div");
-    meta.className = "bar-meta";
-
-    const ratingPill = document.createElement("span");
-    ratingPill.className = "rating-pill";
-    if (bar.rating >= 8) {
-      ratingPill.classList.add("rating-pill-strong");
-    } else if (bar.rating <= 3) {
-      ratingPill.classList.add("rating-pill-mild");
-    }
-
-    const ratingNumber = document.createElement("span");
-    ratingNumber.className = "bar-rating-number";
-    ratingNumber.textContent = `${bar.rating}/10`;
-
-    const ratingText = document.createElement("span");
-    ratingText.className = "bar-rating-label";
-    ratingText.textContent = ` ${ratingLabel(bar.rating)} smell`;
-
-    ratingPill.appendChild(ratingNumber);
-    ratingPill.appendChild(ratingText);
-    meta.appendChild(ratingPill);
-
     info.appendChild(titleEl);
-    info.appendChild(meta);
-
-    li.appendChild(image);
+    li.appendChild(media);
     li.appendChild(info);
 
     return li;
