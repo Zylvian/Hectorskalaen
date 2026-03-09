@@ -1,44 +1,60 @@
 # Hectorskalaen – Bar Smell Index (Bergen)
 
-Hectorskalaen is a small single-page web app for tracking how strongly different bars in Bergen, Norway smell on a scale from **1–10**.
+Hectorskalaen is a small web app that lists how strongly bars in Bergen, Norway smell on a scale from **1–10**.
 
-Everything runs in the browser – data is stored in `localStorage`, so nothing is sent to a server.
+The main view shows the full bar list (from `bars.json`) and lets you:
+- Search by bar name
+- Sort by smell rating (high → low or low → high)
+- Toggle between grid and list views
+- Quickly scan the bar rating (with a color-coded, glowing overlay)
 
-## Running the page
+There is also a separate **game mode** where you guess the rating of a randomly chosen bar.
+
+---
+
+## Running the app
 
 1. Open the project folder:
    - `c:\CODE\NEW CODE FOLDER\Cursor\Hectorskalaen`
-2. Open `index.html` in a browser (double‑click it, or drag it into a window).
+2. Open `src/index.html` in a browser (double‑click it or drag it into a browser window).
 
 No build tools, npm, or backend are required.
 
-## Features
+👉 To play the game, open `src/game.html` in your browser.
 
-- **Add bars easily**
-  - Enter a bar name.
-  - Pick a smell rating (1–10) with a slider.
-  - Optionally upload a picture (stored locally in your browser as a data URL).
+---
 
-- **Browse & search**
-  - Sticky header with **search** so you can quickly filter by bar name.
-  - Scrollable list with cards showing:
-    - Bar name
-    - Smell rating + label (e.g. “legendary”, “mild”)
-    - Date/time added
-    - Picture (if provided)
+## How to add or edit bars
 
-- **Sort & manage**
-  - Toggle sort between “smell high → low” and “smell low → high”.
-  - Remove individual bars.
-  - Clear all bars for this browser.
+Bars are defined in `src/bars.json` as an array of objects:
 
-## Data storage
-
-Bars are stored JSON-encoded in `window.localStorage` under the key:
-
-```text
-hectorskalaen-bars-v1
+```json
+{
+  "title": "Bar name",
+  "rating": 1,
+  "picture": "https://example.com/image.jpg",
+  "description": "Optional description"
+}
 ```
 
-If you want to “reset” everything manually, you can clear that key in your browser dev tools or use the **“Clear all (this browser)”** button in the UI.
+To add a new bar, simply add another object to the array and reload the page.
+
+---
+
+## Folder structure
+
+- `src/index.html` — main browse/list UI
+- `src/game.html` — standalone guessing game
+- `src/app.js` — shared UI logic (list + game)
+- `src/styles.css` — shared styling for both pages
+- `src/bars.json` — bar data (title, rating, picture, description)
+
+---
+
+## Design goals
+
+- Easy to browse + search bars
+- Fast scrolling and responsive layout
+- Simple to update the bar list via `bars.json`
+- Lightweight: vanilla HTML/JS/CSS, no build step
 
