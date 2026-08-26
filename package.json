@@ -13,5 +13,8 @@
     "bars",
     "smell",
     "hectorskalaen"
-]
+],
+"devDependencies": {
+    "sirv-cli": "^3.0.0"
+}
 }
