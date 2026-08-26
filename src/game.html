@@ -1,33 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nb">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hectorskalaen – Guess the Rating</title>
+    <meta name="theme-color" content="#07080d" />
+    <title>Hectorskalaen – Gjett luktscore</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="app-root">
       <header class="app-header">
-        <div class="header-main">
+        <div class="header-brand">
+          <p class="eyebrow">Gjett folkets snitt</p>
           <h1>Hectorskalaen</h1>
-          <p class="tagline">Guess the rating — how bad does it smell?</p>
+          <p class="tagline">
+            Gjett hvordan folket har rangert lukta — 1 er friskt, 10 er piss.
+          </p>
         </div>
-        <div class="header-controls">
-          <a class="btn-ghost" href="index.html">
-            Back to list
-          </a>
-        </div>
+        <nav class="header-nav" aria-label="Sider">
+          <a class="nav-link" href="index.html">Barer</a>
+          <a class="nav-link is-active" href="game.html">Spill</a>
+        </nav>
       </header>
 
       <main class="app-main">
         <section class="panel panel-game" data-mode="game">
           <header class="panel-header panel-header-game">
             <div>
-              <h2>Guess the Hectorskalaen</h2>
+              <h2>Gjett Hectorskalaen</h2>
               <p class="results-summary" id="gameSummary">
-                Pick a number between 1 and 10.
+                Velg et tall mellom 1 og 10.
               </p>
             </div>
           </header>
@@ -39,7 +48,7 @@
                 <h3 id="gameTitle"></h3>
                 <p id="gameHint" class="game-hint"></p>
                 <div class="game-input-row">
-                  <label for="guessInput" class="sr-only">Your guess</label>
+                  <label for="guessInput" class="sr-only">Ditt gjett</label>
                   <input
                     id="guessInput"
                     type="number"
@@ -48,9 +57,7 @@
                     placeholder="1–10"
                     autocomplete="off"
                   />
-                  <button id="guessSubmit" class="btn-ghost" type="button">
-                    Guess
-                  </button>
+                  <button id="guessSubmit" class="btn-ghost" type="button">Gjett</button>
                 </div>
                 <p id="guessFeedback" class="guess-feedback"></p>
               </div>
@@ -61,7 +68,7 @@
 
       <footer class="app-footer">
         <p>
-          For uenigheter eller nye inklusjoner, send mail til: <br />
+          For uenigheter:
           <a href="mailto:etmeg@hectorskalaen.no">etmeg@hectorskalaen.no</a>
         </p>
       </footer>

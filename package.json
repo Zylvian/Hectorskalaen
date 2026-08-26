@@ -1,17 +1,18 @@
-
 {
-"name": "hectorskalaen",
-"version": "1.0.0",
-"description": "Hectorskalaen – a small static web page that lists bars in Bergen on a 1–10 smell scale.",
-"private": true,
-"scripts": { 
-    "start": "sirv ./src public --cors --single --no-clear --port 8000",
+  "name": "hectorskalaen",
+  "version": "2.0.0",
+  "description": "Hectorskalaen – community smell ratings for bars in Bergen.",
+  "private": true,
+  "scripts": {
+    "start": "node scripts/dev-server.mjs",
+    "fetch-bars": "node scripts/fetch-bergen-bars.mjs",
+    "test": "node scripts/test-store.mjs",
     "build": "echo \"Static site – nothing to build\""
-},
-"keywords": [
+  },
+  "keywords": [
     "bergen",
     "bars",
     "smell",
     "hectorskalaen"
-]
+  ]
 }

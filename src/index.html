@@ -1,85 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nb">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hectorskalaen – Hvor Shitty Lukter Denne Bergenske Baren?</title>
+    <meta
+      name="description"
+      content="Hectorskalaen – Bergens barer rangert etter lukt. Stem 1–10, fra friskt til piss."
+    />
+    <meta name="theme-color" content="#07080d" />
+    <title>Hectorskalaen – Hvor shitty lukter denne bergenske baren?</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#main">Hopp til innhold</a>
     <div class="app-root">
       <header class="app-header">
-        <div class="header-main">
+        <div class="header-brand">
+          <p class="eyebrow">Bergen · luktindeks 1–10</p>
           <h1>Hectorskalaen</h1>
           <p class="tagline">
-            Hectorskalaen er en skala fra 1-10 på hvor shit en bar i Bergen lukter.
+            En skala fra 1 til 10 på hvor shit en bar i Bergen lukter. 1 er
+            friskt. 10 er piss. Stem selv — snittet oppdateres live.
           </p>
         </div>
-        <div class="header-controls">
-          <div class="search-group">
-            <label for="searchInput">Søk etter bar</label>
-            <input
-              type="search"
-              id="searchInput"
-              placeholder="Søk…"
-              autocomplete="off"
-            />
-          </div>
-        </div>
+        <nav class="header-nav" aria-label="Sider">
+          <a class="nav-link is-active" href="index.html">Barer</a>
+          <a class="nav-link" href="game.html">Spill</a>
+        </nav>
       </header>
 
-      <main class="app-main">
-        <section class="panel panel-list" data-mode="browse">
-          <header class="panel-header panel-header-list">
-            <div>
-              <h2>Barer i Bergen på Hectorskalaen</h2>
-              <p id="resultsSummary" class="results-summary">
-                Discover how Bergen’s bars rank on the Hectorskalaen.
-              </p>
-            </div>
-            <div class="list-actions">
-              <a class="btn-ghost" href="game.html" target="_blank" rel="noopener noreferrer">
-                Play game
-              </a>
-              <div class="view-toggle-group" aria-label="Change layout" role="group">
-                <button
-                  id="viewGrid"
-                  class="btn-ghost btn-toggle btn-toggle--active"
-                  type="button"
-                >
-                  Grid
-                </button>
-                <button
-                  id="viewList"
-                  class="btn-ghost btn-toggle"
-                  type="button"
-                >
-                  List
-                </button>
-              </div>
-              <button id="sortToggle" class="btn-ghost" type="button">
-                Sort: smell high → low
-              </button>
-            </div>
-          </header>
+      <section class="scale-panel" aria-label="Slik fungerer skalaen">
+        <div class="scale-track" role="img" aria-label="Luktskala fra 1 til 10">
+          <span>1 friskt</span>
+          <span>5 kjeller</span>
+          <span>10 piss</span>
+        </div>
+        <ol class="scale-keys">
+          <li><strong>1–2</strong> ingen lukt / godt</li>
+          <li><strong>5–6</strong> merkbart</li>
+          <li><strong>9–10</strong> piss-territorium</li>
+        </ol>
+      </section>
 
-          <div class="bars-scroll-wrapper">
-            <ul id="barsList" class="bars-list"></ul>
+      <section class="stats-row" aria-label="Nøkkeltall">
+        <article>
+          <p id="statBars">–</p>
+          <h2>Barer i Bergen</h2>
+        </article>
+        <article>
+          <p id="statVotes">–</p>
+          <h2>Stemmer</h2>
+        </article>
+        <article>
+          <p id="statWorst">–</p>
+          <h2>Verst nå</h2>
+        </article>
+      </section>
+
+      <div class="toolbar">
+        <div class="search-group">
+          <label for="searchInput">Søk etter bar</label>
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Pingvinen, Kråken, Folk og Røvere…"
+            autocomplete="off"
+          />
+        </div>
+        <div class="toolbar-filters">
+          <label class="sr-only" for="amenityFilter">Type</label>
+          <select id="amenityFilter">
+            <option value="all">Alle typer</option>
+            <option value="bar">Bar</option>
+            <option value="pub">Pub</option>
+            <option value="nightclub">Nattklubb</option>
+          </select>
+          <label class="sr-only" for="sortSelect">Sortering</label>
+          <select id="sortSelect">
+            <option value="worst">Lukt: verst først</option>
+            <option value="best">Lukt: best først</option>
+            <option value="votes">Flest stemmer</option>
+            <option value="az">A–Å</option>
+            <option value="near">Nærmest meg</option>
+            <option value="unrated">Mangler stemmer</option>
+          </select>
+          <div class="view-toggle-group" role="group" aria-label="Visning">
+            <button id="viewGrid" class="btn-ghost btn-toggle btn-toggle--active" type="button">
+              Rutenett
+            </button>
+            <button id="viewList" class="btn-ghost btn-toggle" type="button">Liste</button>
+            <button id="viewMap" class="btn-ghost btn-toggle" type="button">Kart</button>
           </div>
-        </section>
+        </div>
+      </div>
 
+      <main id="main" class="app-main">
+        <p id="resultsSummary" class="results-summary">Laster barer i Bergen…</p>
+        <div class="bars-scroll-wrapper">
+          <ul id="barsList" class="bars-list bars-list--grid"></ul>
+        </div>
+        <div id="mapPanel" class="map-panel" hidden>
+          <div id="map" class="map-canvas" role="application" aria-label="Kart over barer i Bergen"></div>
+        </div>
       </main>
 
       <footer class="app-footer">
         <p>
-          For uenigheter eller nye inklusjoner, send mail til: <br>
+          Barene hentes fra OpenStreetMap for Bergen. Mangler et utested?
+          Legg det inn på
+          <a href="https://www.openstreetmap.org" rel="noopener noreferrer" target="_blank">OpenStreetMap</a>
+          — vi scanner området, vi tar ikke imot innsendinger her.
+        </p>
+        <p>
+          Kart og katalog ©
+          <a href="https://www.openstreetmap.org/copyright" rel="noopener noreferrer" target="_blank">OpenStreetMap-bidragsytere</a>
+          (ODbL). For uenigheter:
           <a href="mailto:etmeg@hectorskalaen.no">etmeg@hectorskalaen.no</a>
         </p>
+        <p id="persistenceNote" class="persistence-note" hidden></p>
       </footer>
     </div>
 
+    <dialog id="barDialog" class="bar-dialog">
+      <form method="dialog" class="dialog-chrome">
+        <button class="btn-ghost" value="close" type="submit">Lukk</button>
+      </form>
+      <div id="dialogBody" class="dialog-body"></div>
+    </dialog>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
     <script src="app.js"></script>
   </body>
 </html>
-
