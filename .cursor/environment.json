@@ -1,0 +1,17 @@
+{
+  "name": "Hectorskalaen",
+  "install": "npm install",
+  "terminals": [
+    {
+      "name": "dev-server",
+      "command": "npm start",
+      "description": "Static dev server (sirv) for the Hectorskalaen site on http://localhost:8000"
+    }
+  ],
+  "ports": [
+    {
+      "name": "web",
+      "port": 8000
+    }
+  ]
+}
