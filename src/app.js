@@ -231,7 +231,9 @@
     }
     statBars.textContent = String(bars.length);
     statVotes.textContent = String(voteTotal);
-    statWorst.textContent = worst ? `${formatAverage(worst.average)} ${worst.title}` : "–";
+    statWorst.textContent = worst ? formatAverage(worst.average) : "–";
+    const worstLabel = document.getElementById("statWorstLabel");
+    if (worstLabel) worstLabel.textContent = worst ? worst.title : "Verst nå";
   }
 
   function createMonogram(bar) {
@@ -358,45 +360,61 @@
   }
 
   function renderMap() {
-    if (!ensureMap()) {
+    if (listWrapper) listWrapper.hidden = true;
+    if (mapPanel) mapPanel.hidden = false;
+    if (typeof L === "undefined") {
       if (resultsSummary) {
         resultsSummary.textContent = "Kartet kunne ikke lastes. Prøv rutenett-visning.";
       }
       return;
     }
-    clearMapMarkers();
-    const filtered = filteredBars();
-    const bounds = [];
-    filtered.forEach((bar) => {
-      if (!Number.isFinite(bar.lat) || !Number.isFinite(bar.lon)) return;
-      const stats = displayScore(bar);
-      const color = stats.average == null ? "#94a3b8" : ratingColor(stats.average);
-      const marker = L.circleMarker([bar.lat, bar.lon], {
-        radius: stats.count > 8 ? 11 : stats.count > 0 ? 9 : 7,
-        color,
-        weight: 2,
-        fillColor: color,
-        fillOpacity: 0.85,
-      }).addTo(map);
-      marker.bindPopup(
-        `<strong>${escapeHtml(bar.title)}</strong><br>${formatAverage(stats.average)}/10 · ${stats.count} stemmer`
-      );
-      marker.on("click", () => openBar(bar.id));
-      mapMarkers.push(marker);
-      bounds.push([bar.lat, bar.lon]);
-    });
-    if (bounds.length) map.fitBounds(bounds, { padding: [28, 28], maxZoom: 15 });
-    requestAnimationFrame(() => map.invalidateSize());
-    if (resultsSummary) {
-      resultsSummary.textContent = `${filtered.length} barer på kartet over Bergen.`;
-    }
+
+    const draw = () => {
+      const el = document.getElementById("map");
+      if (!el) return;
+      if (!map) {
+        map = L.map(el, { scrollWheelZoom: true }).setView([60.392, 5.324], 14);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: "&copy; OpenStreetMap",
+        }).addTo(map);
+      }
+      map.invalidateSize();
+      clearMapMarkers();
+      const filtered = filteredBars();
+      const bounds = [];
+      filtered.forEach((bar) => {
+        if (!Number.isFinite(bar.lat) || !Number.isFinite(bar.lon)) return;
+        const stats = displayScore(bar);
+        const color = stats.average == null ? "#e7c14f" : ratingColor(stats.average);
+        const marker = L.circleMarker([bar.lat, bar.lon], {
+          radius: 9,
+          color: "#07080d",
+          weight: 1,
+          fillColor: color,
+          fillOpacity: 0.95,
+        }).addTo(map);
+        marker.bindTooltip(`${bar.title} · ${formatAverage(stats.average)}/10`, {
+          direction: "top",
+        });
+        marker.on("click", () => openBar(bar.id));
+        mapMarkers.push(marker);
+        bounds.push([bar.lat, bar.lon]);
+      });
+      if (bounds.length) {
+        map.fitBounds(bounds, { padding: [36, 36], maxZoom: 15 });
+      }
+      if (resultsSummary) {
+        resultsSummary.textContent = `${filtered.length} barer på kartet over Bergen.`;
+      }
+    };
+
+    requestAnimationFrame(() => requestAnimationFrame(draw));
   }
 
   function render() {
     updateStats();
     if (viewMode === "map") {
-      if (listWrapper) listWrapper.hidden = true;
-      if (mapPanel) mapPanel.hidden = false;
       renderMap();
       return;
     }

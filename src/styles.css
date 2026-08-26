@@ -441,6 +441,16 @@ body {
   background: #111;
 }
 
+.leaflet-container {
+  font-family: var(--font-body);
+}
+
+.leaflet-tooltip {
+  background: #101218;
+  color: var(--text);
+  border: 1px solid var(--border-subtle);
+}
+
 .app-footer {
   color: var(--text-muted);
   font-size: 0.82rem;
