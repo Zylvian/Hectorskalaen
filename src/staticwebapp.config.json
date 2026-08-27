@@ -1,5 +1,3 @@
-# Azure Static Web Apps configuration
-# https://learn.microsoft.com/azure/static-web-apps/configuration
 {
   "navigationFallback": {
     "rewrite": "/index.html",

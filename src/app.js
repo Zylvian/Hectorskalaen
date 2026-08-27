@@ -347,18 +347,6 @@
     mapMarkers = [];
   }
 
-  function ensureMap() {
-    if (map || typeof L === "undefined") return map;
-    const el = document.getElementById("map");
-    if (!el) return null;
-    map = L.map(el, { scrollWheelZoom: true }).setView([60.392, 5.324], 14);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: "&copy; OpenStreetMap",
-    }).addTo(map);
-    return map;
-  }
-
   function renderMap() {
     if (listWrapper) listWrapper.hidden = true;
     if (mapPanel) mapPanel.hidden = false;
