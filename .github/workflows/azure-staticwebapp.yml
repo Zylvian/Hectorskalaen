@@ -41,6 +41,28 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+      - name: Inject Turso runtime config
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+        run: |
+          node <<'NODE'
+          const fs = require("fs");
+          const url = process.env.TURSO_DATABASE_URL || "";
+          const token = process.env.TURSO_AUTH_TOKEN || "";
+          if (!url || !token) {
+            console.log("Turso GitHub secrets not set; ratings API will use ephemeral storage");
+            process.exit(0);
+          }
+          fs.writeFileSync(
+            "api/runtime-config.json",
+            JSON.stringify({
+              TURSO_DATABASE_URL: url,
+              TURSO_AUTH_TOKEN: token,
+            })
+          );
+          console.log("Wrote api/runtime-config.json");
+          NODE
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1

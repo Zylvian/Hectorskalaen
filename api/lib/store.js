@@ -40,7 +40,23 @@ function loadDotEnv() {
   }
 }
 
+function loadRuntimeConfig() {
+  try {
+    const configPath = path.join(__dirname, "..", "runtime-config.json");
+    const raw = JSON.parse(require("node:fs").readFileSync(configPath, "utf8"));
+    if (raw.TURSO_DATABASE_URL && process.env.TURSO_DATABASE_URL == null) {
+      process.env.TURSO_DATABASE_URL = String(raw.TURSO_DATABASE_URL);
+    }
+    if (raw.TURSO_AUTH_TOKEN && process.env.TURSO_AUTH_TOKEN == null) {
+      process.env.TURSO_AUTH_TOKEN = String(raw.TURSO_AUTH_TOKEN);
+    }
+  } catch {
+    /* no deploy-time config */
+  }
+}
+
 loadDotEnv();
+loadRuntimeConfig();
 
 function ratingsFilePath() {
   if (process.env.RATINGS_FILE) return process.env.RATINGS_FILE;
