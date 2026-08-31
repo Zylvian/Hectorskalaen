@@ -87,6 +87,14 @@ node scripts/fetch-bergen-bars.mjs --from-file /tmp/bergen-bars.json
 
 Do not add bars by hand in a form. If OSM is missing a place, add it there, then refresh.
 
+Photos live on the catalog entries in `src/bars.json` (`picture` + `pictureSource`), not in Turso. After a bar-list refresh, fill missing photos:
+
+```bash
+npm run fetch-images
+```
+
+That script looks up, in order: OpenStreetMap / Wikidata photos, the venue website’s `og:image`, a nearby Wikipedia page image, Openverse (CC) photos matching the name in Bergen, then a Wikimedia map tile of the coordinates so every card still has an image. Original editorial photos are never replaced.
+
 ---
 
 ## Original data (kept)
@@ -105,6 +113,7 @@ Do not add bars by hand in a form. If OSM is missing a place, add it there, then
 - `api/` — Azure Functions ratings API
 - `scripts/dev-server.mjs` — local static + API server
 - `scripts/fetch-bergen-bars.mjs` — Bergen OSM scan
+- `scripts/fetch-bar-images.mjs` — attach photo URLs to catalog entries
 - `scripts/test-store.mjs` — catalog + rating tests
 
 ---

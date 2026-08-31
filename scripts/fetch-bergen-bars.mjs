@@ -111,7 +111,8 @@ function toBar(element) {
     osmId: element.id,
     website: tags.website || tags["contact:website"] || null,
     openingHours: tags.opening_hours || null,
-    picture: null,
+    picture: tags.image || null,
+    pictureSource: tags.image ? "osm" : null,
     description: null,
     seedRating: null,
     curated: false,
@@ -162,6 +163,7 @@ async function main() {
     if (match) {
       match.title = curated.title;
       match.picture = curated.picture || null;
+      match.pictureSource = curated.picture ? "curated" : null;
       match.description = curated.description || null;
       match.seedRating = curated.rating;
       match.curated = true;
@@ -183,6 +185,7 @@ async function main() {
         website: null,
         openingHours: null,
         picture: curated.picture || null,
+        pictureSource: curated.picture ? "curated" : null,
         description: curated.description || null,
         seedRating: curated.rating,
         curated: true,
@@ -190,10 +193,36 @@ async function main() {
     }
   }
 
+  let previousPictures = new Map();
+  let previousImageMeta = {};
+  try {
+    const previous = JSON.parse(await readFile(resolve(ROOT, "src/bars.json"), "utf8"));
+    previousImageMeta = {
+      imagesFetchedAt: previous.meta?.imagesFetchedAt,
+      imageSources: previous.meta?.imageSources,
+    };
+    for (const bar of previous.bars || []) {
+      if (bar.picture) {
+        previousPictures.set(bar.id, {
+          picture: bar.picture,
+          pictureSource: bar.pictureSource || null,
+        });
+      }
+    }
+  } catch {
+    /* first catalog write */
+  }
+
   fromOsm.sort((a, b) => {
     if (a.curated !== b.curated) return a.curated ? -1 : 1;
     return a.title.localeCompare(b.title, "nb");
   });
+
+  for (const bar of fromOsm) {
+    if (!bar.picture && previousPictures.has(bar.id)) {
+      Object.assign(bar, previousPictures.get(bar.id));
+    }
+  }
 
   const catalog = {
     meta: {
@@ -203,7 +232,13 @@ async function main() {
       bbox: BBOX,
       fetchedAt: new Date().toISOString(),
       barCount: fromOsm.length,
-      note: "Editorial photos, descriptions and seedRating come from src/data/original-bars.json. Live community scores live in the ratings API.",
+      note: "Editorial photos, descriptions and seedRating come from src/data/original-bars.json. Live community scores live in the ratings API. Venue photos are looked up with npm run fetch-images.",
+      ...(previousImageMeta.imagesFetchedAt
+        ? {
+            imagesFetchedAt: previousImageMeta.imagesFetchedAt,
+            imageSources: previousImageMeta.imageSources,
+          }
+        : {}),
     },
     bars: fromOsm,
   };

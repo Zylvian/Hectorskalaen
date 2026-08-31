@@ -79,6 +79,16 @@ async function main() {
     assert(found.description === bar.description, `description dropped for ${bar.title}`);
   }
 
+  const missingPictures = catalog.bars.filter(
+    (bar) => typeof bar.picture !== "string" || !/^https?:\/\//i.test(bar.picture)
+  );
+  assert(
+    missingPictures.length === 0,
+    `every bar needs a picture URL, missing: ${missingPictures.map((b) => b.title).join(", ")}`
+  );
+  const pictureUrls = catalog.bars.map((bar) => bar.picture);
+  assert(new Set(pictureUrls).size === pictureUrls.length, "picture URLs should be unique per bar");
+
   await rm(dir, { recursive: true, force: true });
   console.log("All store and catalog checks passed.");
 }
