@@ -1,0 +1,9 @@
+{
+  "name": "hectorskalaen-api",
+  "version": "1.0.0",
+  "private": true,
+  "main": "ratings/index.js",
+  "dependencies": {
+    "@libsql/client": "^0.15.15"
+  }
+}
