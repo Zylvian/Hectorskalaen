@@ -93,7 +93,7 @@ Photos live on the catalog entries in `src/bars.json` (`picture` + `pictureSourc
 npm run fetch-images
 ```
 
-That script looks up, in order: OpenStreetMap / Wikidata photos, the venue website’s `og:image`, a nearby Wikipedia page image, Openverse (CC) photos matching the name in Bergen, then a Carto/OpenStreetMap neighborhood tile of the coordinates so every card still has an image. Original editorial photos are never replaced. Map previews © OpenStreetMap, © CARTO.
+That script looks up, in order: OpenStreetMap / Wikidata photos, the venue website’s `og:image`, a nearby Wikipedia page image, Openverse (CC) photos matching the name in Bergen, then a neighborhood map snapshot saved under `src/media/maps/` so every card still has an image. Original editorial photos are never replaced. Map snapshots © OpenStreetMap contributors.
 
 ---
 
@@ -109,6 +109,7 @@ That script looks up, in order: OpenStreetMap / Wikidata photos, the venue websi
 - `src/game.html` — guess-the-score game
 - `src/app.js` / `src/styles.css` — client
 - `src/bars.json` — OSM + curated catalog
+- `src/media/maps/` — neighborhood map snapshots for venues without a photo
 - `src/data/original-bars.json` — archived original entries
 - `api/` — Azure Functions ratings API
 - `scripts/dev-server.mjs` — local static + API server

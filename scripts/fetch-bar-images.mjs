@@ -7,12 +7,12 @@
  *   2. The bar's own website (og:image)
  *   3. Wikipedia page image, only if the page sits near the OSM coordinates
  *   4. Openverse (CC photos) with a name + Bergen match
- *   5. Carto/OSM neighborhood map tile of the venue coordinates (always available)
+ *   5. A local OSM neighborhood map snapshot (src/media/maps) so every card has an image
  *
  * Usage: node scripts/fetch-bar-images.mjs
  */
-import { readFile, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -111,22 +111,61 @@ async function fetchText(url) {
   return { html: await response.text(), finalUrl: response.url };
 }
 
-function mapTileUrl(lat, lon, zoom = 18) {
+const tileCache = new Map();
+
+function tileXY(lat, lon, zoom = 18) {
   const n = 2 ** zoom;
   const x = Math.floor(((lon + 180) / 360) * n);
   const latRad = (lat * Math.PI) / 180;
   const y = Math.floor((1 - Math.asinh(Math.tan(latRad)) / Math.PI) / 2 * n);
-  return `https://basemaps.cartocdn.com/rastertiles/voyager/${zoom}/${x}/${y}@2x.png`;
+  return { zoom, x, y };
 }
 
-function mapPicture(bar) {
+async function fetchTileBytes(zoom, x, y) {
+  const key = `${zoom}/${x}/${y}`;
+  if (tileCache.has(key)) return tileCache.get(key);
+  const urls = [
+    `https://tile.openstreetmap.org/${zoom}/${x}/${y}.png`,
+    `https://tile.openstreetmap.de/${zoom}/${x}/${y}.png`,
+  ];
+  let lastError;
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, { headers: { "User-Agent": UA } });
+      if (!response.ok) {
+        lastError = new Error(`${url} → ${response.status}`);
+        continue;
+      }
+      const bytes = Buffer.from(await response.arrayBuffer());
+      tileCache.set(key, bytes);
+      await sleep(150);
+      return bytes;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError || new Error(`No map tile for ${key}`);
+}
+
+async function mapPicture(bar) {
+  const { zoom, x, y } = tileXY(bar.lat, bar.lon);
+  const bytes = await fetchTileBytes(zoom, x, y);
+  const dir = resolve(ROOT, "src/media/maps");
+  await mkdir(dir, { recursive: true });
+  const filename = `${bar.id}.png`;
+  await writeFile(join(dir, filename), bytes);
   return {
-    picture: `${mapTileUrl(bar.lat, bar.lon)}?bar=${encodeURIComponent(bar.id)}`,
+    picture: `/media/maps/${filename}`,
     pictureSource: "map",
   };
 }
 
+function isLocalMap(url) {
+  return /^\/media\/maps\/.+\.png$/i.test(url || "");
+}
+
 async function urlWorks(url) {
+  if (isLocalMap(url)) return true;
   try {
     const response = await fetch(url, {
       headers: { "User-Agent": UA, Range: "bytes=0-1023" },
@@ -295,8 +334,8 @@ async function main() {
   for (const bar of catalog.bars) {
     if (bar.curated) continue;
     if (bar.pictureSource === "map") {
-      if (/maps\.wikimedia\.org/i.test(bar.picture || "")) {
-        Object.assign(bar, mapPicture(bar));
+      if (!isLocalMap(bar.picture)) {
+        Object.assign(bar, await mapPicture(bar));
       }
       continue;
     }
@@ -314,7 +353,7 @@ async function main() {
   const missing = catalog.bars.filter((bar) => !bar.picture);
   console.log(`Looking up images for ${missing.length} bars…`);
 
-  const osmHits = await fromOverpass(missing);
+  const osmHits = missing.length ? await fromOverpass(missing) : new Map();
   console.log(`OSM/Wikidata hits: ${osmHits.size}`);
 
   let found = 0;
@@ -341,8 +380,12 @@ async function main() {
       found += 1;
       continue;
     }
-    Object.assign(bar, mapPicture(bar));
-    found += 1;
+    try {
+      Object.assign(bar, await mapPicture(bar));
+      found += 1;
+    } catch (err) {
+      console.warn(`No map snapshot for ${bar.title}: ${err.message}`);
+    }
   }
 
   const sources = {};
@@ -358,6 +401,7 @@ async function main() {
   await writeFile(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
   console.log("Image sources:", sources);
   console.log(`Updated ${found} missing pictures.`);
+  process.exit(0);
 }
 
 main().catch((err) => {

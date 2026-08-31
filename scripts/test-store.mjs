@@ -79,9 +79,10 @@ async function main() {
     assert(found.description === bar.description, `description dropped for ${bar.title}`);
   }
 
-  const missingPictures = catalog.bars.filter(
-    (bar) => typeof bar.picture !== "string" || !/^https?:\/\//i.test(bar.picture)
-  );
+  const missingPictures = catalog.bars.filter((bar) => {
+    if (typeof bar.picture !== "string") return true;
+    return !/^https?:\/\//i.test(bar.picture) && !/^\/media\/maps\/.+\.png$/i.test(bar.picture);
+  });
   assert(
     missingPictures.length === 0,
     `every bar needs a picture URL, missing: ${missingPictures.map((b) => b.title).join(", ")}`
