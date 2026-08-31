@@ -7,7 +7,7 @@
  *   2. The bar's own website (og:image)
  *   3. Wikipedia page image, only if the page sits near the OSM coordinates
  *   4. Openverse (CC photos) with a name + Bergen match
- *   5. Wikimedia map tile of the venue location (always available)
+ *   5. Carto/OSM neighborhood map tile of the venue coordinates (always available)
  *
  * Usage: node scripts/fetch-bar-images.mjs
  */
@@ -60,7 +60,12 @@ function nearBergen(lat, lon, bar, maxKm = 0.35) {
 }
 
 function commonsFileUrl(filename) {
-  const file = String(filename).replace(/^File:/i, "").replace(/ /g, "_");
+  let file = String(filename).replace(/^File:/i, "").replace(/ /g, "_");
+  try {
+    file = decodeURIComponent(file);
+  } catch {
+    /* already decoded */
+  }
   return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=800`;
 }
 
@@ -106,18 +111,39 @@ async function fetchText(url) {
   return { html: await response.text(), finalUrl: response.url };
 }
 
+function mapTileUrl(lat, lon, zoom = 18) {
+  const n = 2 ** zoom;
+  const x = Math.floor(((lon + 180) / 360) * n);
+  const latRad = (lat * Math.PI) / 180;
+  const y = Math.floor((1 - Math.asinh(Math.tan(latRad)) / Math.PI) / 2 * n);
+  return `https://basemaps.cartocdn.com/rastertiles/voyager/${zoom}/${x}/${y}@2x.png`;
+}
+
 function mapPicture(bar) {
-  const lat = bar.lat.toFixed(5);
-  const lon = bar.lon.toFixed(5);
   return {
-    picture: `https://maps.wikimedia.org/img/osm-intl,18,${lat},${lon},800x800.png`,
+    picture: `${mapTileUrl(bar.lat, bar.lon)}?bar=${encodeURIComponent(bar.id)}`,
     pictureSource: "map",
   };
 }
 
-function acceptPicture(bar, hit, usedUrls) {
+async function urlWorks(url) {
+  try {
+    const response = await fetch(url, {
+      headers: { "User-Agent": UA, Range: "bytes=0-1023" },
+      redirect: "follow",
+    });
+    if (!response.ok) return false;
+    const type = response.headers.get("content-type") || "";
+    return /^image\//i.test(type);
+  } catch {
+    return false;
+  }
+}
+
+async function acceptPicture(bar, hit, usedUrls) {
   if (!hit?.picture) return false;
   if (hit.pictureSource !== "map" && usedUrls.has(hit.picture)) return false;
+  if (hit.pictureSource !== "map" && !(await urlWorks(hit.picture))) return false;
   Object.assign(bar, hit);
   if (hit.pictureSource !== "map") usedUrls.add(hit.picture);
   return true;
@@ -268,15 +294,20 @@ async function main() {
   );
   for (const bar of catalog.bars) {
     if (bar.curated) continue;
-    if (bar.pictureSource === "map") continue;
+    if (bar.pictureSource === "map") {
+      if (/maps\.wikimedia\.org/i.test(bar.picture || "")) {
+        Object.assign(bar, mapPicture(bar));
+      }
+      continue;
+    }
     if (!bar.picture) continue;
     const badUrl =
       !looksLikePhoto(bar.picture) ||
       /stolperstein|grindadrap|lungeg|under_dekk|under%20dekk/i.test(bar.picture);
-    if (badUrl || usedUrls.has(bar.picture)) {
+    if (badUrl || usedUrls.has(bar.picture) || !(await urlWorks(bar.picture))) {
       bar.picture = null;
       bar.pictureSource = null;
-    } else if (bar.pictureSource !== "map") {
+    } else {
       usedUrls.add(bar.picture);
     }
   }
@@ -289,24 +320,24 @@ async function main() {
   let found = 0;
   for (const bar of catalog.bars) {
     if (bar.picture) continue;
-    if (osmHits.has(bar.id) && acceptPicture(bar, osmHits.get(bar.id), usedUrls)) {
+    if (osmHits.has(bar.id) && (await acceptPicture(bar, osmHits.get(bar.id), usedUrls))) {
       found += 1;
       continue;
     }
     const website = await fromWebsite(bar);
     await sleep(120);
-    if (acceptPicture(bar, website, usedUrls)) {
+    if (await acceptPicture(bar, website, usedUrls)) {
       found += 1;
       continue;
     }
     const wiki = await fromWikipedia(bar);
-    if (acceptPicture(bar, wiki, usedUrls)) {
+    if (await acceptPicture(bar, wiki, usedUrls)) {
       found += 1;
       continue;
     }
     const openverse = await fromOpenverse(bar);
     await sleep(200);
-    if (acceptPicture(bar, openverse, usedUrls)) {
+    if (await acceptPicture(bar, openverse, usedUrls)) {
       found += 1;
       continue;
     }

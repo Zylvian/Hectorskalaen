@@ -93,7 +93,7 @@ Photos live on the catalog entries in `src/bars.json` (`picture` + `pictureSourc
 npm run fetch-images
 ```
 
-That script looks up, in order: OpenStreetMap / Wikidata photos, the venue website’s `og:image`, a nearby Wikipedia page image, Openverse (CC) photos matching the name in Bergen, then a Wikimedia map tile of the coordinates so every card still has an image. Original editorial photos are never replaced.
+That script looks up, in order: OpenStreetMap / Wikidata photos, the venue website’s `og:image`, a nearby Wikipedia page image, Openverse (CC) photos matching the name in Bergen, then a Carto/OpenStreetMap neighborhood tile of the coordinates so every card still has an image. Original editorial photos are never replaced. Map previews © OpenStreetMap, © CARTO.
 
 ---
 
