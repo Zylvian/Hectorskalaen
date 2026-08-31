@@ -44,21 +44,27 @@ npm test
 
 ### Production database (Turso)
 
+The Azure Portal **Environment variables** blade currently errors with
+`App settings are undefined` on this Static Web App, so we do **not** rely on it.
+
 1. Create a free database at [https://app.turso.tech/signup](https://app.turso.tech/signup) (no card, databases do not go idle).
-2. Copy the URL and token into Azure Static Web Apps → *Configuration* → application settings:
+2. Add these **GitHub Actions secrets** (not Azure Portal settings):
+   [https://github.com/Zylvian/Hectorskalaen/settings/secrets/actions](https://github.com/Zylvian/Hectorskalaen/settings/secrets/actions)
 
    - `TURSO_DATABASE_URL` = `libsql://…turso.io`
    - `TURSO_AUTH_TOKEN` = the database token
 
-   Or with the CLI:
+3. Re-run **Deploy web app to Azure Static Web Apps** on `main` (or push a commit). The workflow writes the values into the API package at deploy time.
 
-   ```bash
-   az staticwebapp appsettings set \
-     --name <your-swa-name> \
-     --setting-names TURSO_DATABASE_URL=libsql://… TURSO_AUTH_TOKEN=…
-   ```
+Until those secrets exist, the deployed API still works but stores votes in a temporary file that does not survive restarts.
 
-Until those settings exist, the deployed API still works but stores votes in a temporary file that does not survive restarts.
+If you prefer Azure CLI instead of GitHub secrets:
+
+```bash
+az staticwebapp appsettings set \
+  --name <your-swa-name> \
+  --setting-names TURSO_DATABASE_URL=libsql://… TURSO_AUTH_TOKEN=…
+```
 
 ---
 
