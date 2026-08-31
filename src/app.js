@@ -265,13 +265,16 @@
 
     const overlay = document.createElement("div");
     overlay.className = "bar-rating-overlay";
+    const scored = stats.average != null;
+    overlay.setAttribute("aria-label", scored ? `${formatAverage(stats.average)} av 10` : "Ingen score ennå");
+    if (scored) {
+      overlay.style.setProperty("--overlay-glow", ratingColor(stats.average));
+    } else {
+      overlay.classList.add("bar-rating-overlay--empty");
+    }
     const number = document.createElement("span");
     number.className = "bar-rating-overlay-number";
-    number.textContent = stats.average == null ? "?" : formatAverage(stats.average);
-    if (stats.average != null) {
-      number.style.color = ratingColor(stats.average);
-      overlay.style.setProperty("--overlay-glow", ratingColor(stats.average));
-    }
+    number.textContent = scored ? formatAverage(stats.average) : "?";
     const label = document.createElement("span");
     label.className = "bar-rating-overlay-label";
     label.textContent = "/10";
@@ -446,7 +449,7 @@
         <p class="eyebrow">${escapeHtml(amenityLabel(bar.amenity))}${osmNote}</p>
         <h2>${escapeHtml(bar.title)}</h2>
         <p class="dialog-score">
-          <span style="color:${stats.average == null ? "inherit" : ratingColor(stats.average)}">${formatAverage(stats.average)}</span>
+          <span class="dialog-score-value">${formatAverage(stats.average)}</span>
           /10
           <small>${stats.count} ${stats.count === 1 ? "stemme" : "stemmer"}</small>
         </p>
