@@ -253,6 +253,7 @@
       image.src = bar.picture;
       image.alt = bar.title;
       image.loading = "lazy";
+      image.referrerPolicy = "no-referrer";
       image.addEventListener("error", () => {
         image.remove();
         media.prepend(createMonogram(bar));
