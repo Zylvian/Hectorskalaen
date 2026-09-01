@@ -21,6 +21,13 @@
   const VISITOR_KEY = "hectorskalaen.visitorId";
   const MY_RATINGS_KEY = "hectorskalaen.myRatings";
   const COMMENT_MAX = 280;
+  /** Bergen sentrum: Torgallmenningen / Vågen / Engen. Outliers stay on the map but do not pull the start view. */
+  const MAP_SENTRUM_BOUNDS = [
+    [60.3896, 5.3186],
+    [60.3974, 5.3298],
+  ];
+  const MAP_DEFAULT_CENTER = [60.393, 5.3242];
+  const MAP_DEFAULT_ZOOM = 15;
 
   /** @type {Array<any>} */
   let bars = [];
@@ -496,7 +503,7 @@
         map = L.map(el, {
           scrollWheelZoom: true,
           zoomControl: false,
-        }).setView([60.3913, 5.3221], 14);
+        }).setView(MAP_DEFAULT_CENTER, MAP_DEFAULT_ZOOM);
         L.control.zoom({ position: "bottomright" }).addTo(map);
         L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
           maxZoom: 19,
@@ -532,9 +539,14 @@
         mapMarkers.push(marker);
         bounds.push([bar.lat, bar.lon]);
       });
-      const fitKey = `${rankingFilter}|${amenityFilter}|${searchQuery.trim().toLowerCase()}`;
-      if (bounds.length && fitKey !== mapFitKey) {
-        map.fitBounds(bounds, { padding: [48, 48], maxZoom: 15 });
+      const search = searchQuery.trim();
+      const fitKey = `${rankingFilter}|${amenityFilter}|${search.toLowerCase()}`;
+      if (fitKey !== mapFitKey) {
+        if (search && bounds.length) {
+          map.fitBounds(bounds, { padding: [48, 48], maxZoom: 16 });
+        } else {
+          map.fitBounds(MAP_SENTRUM_BOUNDS, { padding: [24, 24], maxZoom: 16 });
+        }
         mapFitKey = fitKey;
       }
       if (resultsSummary) {
