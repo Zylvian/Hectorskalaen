@@ -606,12 +606,11 @@
     const own = Boolean(item.own);
     const color = ratingColor(item.score);
     return `<li>
-          <p class="comment-text">
-            <span class="comment-score" style="--score-color:${color};--overlay-glow:${color}" aria-label="${item.score} av 10">
-              <span class="comment-score-number">${item.score}</span>
-              <span class="comment-score-label">/10</span>
-            </span> ${escapeHtml(item.comment)}
-          </p>
+          <span class="comment-score" style="--score-color:${color};--overlay-glow:${color}" aria-label="${item.score} av 10">
+            <span class="comment-score-number">${item.score}</span>
+            <span class="comment-score-label">/10</span>
+          </span>
+          <p class="comment-text">${escapeHtml(item.comment)}</p>
           <div class="comment-votes">
             <button type="button" class="comment-vote comment-vote--up${upActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="1" aria-pressed="${upActive ? "true" : "false"}" aria-label="Like, ${up}" ${own ? "disabled title=\"Du kan ikke like din egen kommentar\"" : ""}>↑ <span class="comment-vote-count">${up}</span></button>
             <button type="button" class="comment-vote comment-vote--down${downActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="-1" aria-pressed="${downActive ? "true" : "false"}" aria-label="Dislike, ${down}" ${own ? "disabled title=\"Du kan ikke dislike din egen kommentar\"" : ""}>↓ <span class="comment-vote-count">${down}</span></button>

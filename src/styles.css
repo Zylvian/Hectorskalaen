@@ -1026,6 +1026,7 @@ body {
 .comment-list li {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 8px;
   padding: 12px;
   border-radius: 12px;
@@ -1035,6 +1036,7 @@ body {
 
 .comment-text {
   margin: 0;
+  width: 100%;
   line-height: 1.5;
 }
 
@@ -1043,9 +1045,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 1px;
-  vertical-align: middle;
-  margin: 0 8px 2px 0;
-  padding: 4px 8px 3px;
+  padding: 5px 9px 4px;
   border-radius: 10px;
   background: rgba(11, 12, 18, 0.92);
   color: var(--score-color, #f4efe4);
