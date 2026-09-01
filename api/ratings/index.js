@@ -1,4 +1,5 @@
 const store = require("../lib/store");
+const rateLimit = require("../lib/rate-limit");
 
 function corsHeaders(req) {
   const origin = (req.headers && (req.headers.origin || req.headers.Origin)) || "*";
@@ -16,6 +17,7 @@ function json(context, req, status, body) {
     headers: {
       ...corsHeaders(req),
       "Content-Type": "application/json; charset=utf-8",
+      ...(status === 429 ? { "Retry-After": "60" } : {}),
     },
     body,
   };
@@ -36,6 +38,7 @@ module.exports = async function (context, req) {
     }
 
     if (req.method === "POST") {
+      rateLimit.assertPostAllowed(req);
       const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
       if (body.commentId != null || body.vote != null) {
         json(
