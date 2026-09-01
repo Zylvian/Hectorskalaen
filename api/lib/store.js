@@ -83,6 +83,10 @@ async function loadCatalog() {
   return catalogCache;
 }
 
+function roundToTenth(value) {
+  return Math.round((Number(value) + Number.EPSILON) * 10) / 10;
+}
+
 function emptyStats() {
   return {
     average: null,
@@ -175,7 +179,7 @@ function aggregate(rows, votes = [], viewerId = null) {
         String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""))
     );
     ratings[barId] = {
-      average: Math.round((entry.sum / entry.count) * 10) / 10,
+      average: roundToTenth(entry.sum / entry.count),
       count: entry.count,
       histogram: entry.histogram,
       comments: entry.comments.slice(0, 40),

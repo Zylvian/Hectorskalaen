@@ -205,12 +205,52 @@ async function main() {
   const pictureUrls = catalog.bars.map((bar) => bar.picture);
   assert(new Set(pictureUrls).size === pictureUrls.length, "picture URLs should be unique per bar");
 
+  const decimalBar = "osm-n4682353960";
+  await store.upsertRating({
+    barId: decimalBar,
+    score: 10,
+    visitorId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  });
+  await store.upsertRating({
+    barId: decimalBar,
+    score: 10,
+    visitorId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  });
+  await store.upsertRating({
+    barId: decimalBar,
+    score: 9,
+    visitorId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+  });
+  const decimalStats = (await store.getAggregates()).ratings[decimalBar];
+  assert(decimalStats.histogram[9] === 2, "two votes of 10");
+  assert(decimalStats.histogram[8] === 1, "one vote of 9");
+  assert(
+    decimalStats.average === 9.7,
+    `2×10 and 1×9 should round to 9.7, got ${decimalStats.average}`
+  );
+  await store.upsertRating({
+    barId: decimalBar,
+    score: 10,
+    visitorId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+  });
+  await store.upsertRating({
+    barId: decimalBar,
+    score: 7,
+    visitorId: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+  });
+  const nineTwo = (await store.getAggregates()).ratings[decimalBar];
+  assert(
+    nineTwo.average === 9.2,
+    `10+10+9+10+7 should round to 9.2, got ${nineTwo.average}`
+  );
+
   const homepage = await readFile(new URL("../src/index.html", import.meta.url), "utf8");
   assert(homepage.includes('id="map"'), "homepage should include a map canvas");
   assert(homepage.includes('id="viewMap"'), "homepage should include a map view toggle");
   const appJs = await readFile(new URL("../src/app.js", import.meta.url), "utf8");
   assert(appJs.includes("mapHoverHtml"), "map hover card helper missing");
   assert(appJs.includes("World_Street_Map"), "map should use street tiles");
+  assert(appJs.includes("roundToTenth"), "averages should round to one decimal");
 
   await rm(dir, { recursive: true, force: true });
   console.log("All store and catalog checks passed.");

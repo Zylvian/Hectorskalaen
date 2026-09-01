@@ -445,6 +445,11 @@ body {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.72);
 }
 
+.bar-rating-overlay--decimal .bar-rating-overlay-number {
+  font-size: 1.35rem;
+  letter-spacing: 0.02em;
+}
+
 .bar-rating-overlay-label {
   font-size: 0.68rem;
   font-weight: 600;
@@ -572,6 +577,11 @@ body {
   letter-spacing: 0.02em;
   color: #101218;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.map-pin--decimal span {
+  font-size: 0.7rem;
+  letter-spacing: 0;
 }
 
 .map-pin.is-selected {
