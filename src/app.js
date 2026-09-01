@@ -898,6 +898,7 @@
     const next = Boolean(open) && isMobileFilters();
     document.body.classList.toggle("filters-open", next);
     filtersToggle?.setAttribute("aria-expanded", String(next));
+    filtersToggle?.setAttribute("aria-label", next ? "Lukk søk og filter" : "Vis søk og filter");
     if (filtersScrim) filtersScrim.hidden = !next;
     if (filtersDrawer) {
       if (isMobileFilters()) filtersDrawer.toggleAttribute("inert", !next);

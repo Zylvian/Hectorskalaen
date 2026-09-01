@@ -1268,23 +1268,45 @@ body {
   }
 
   .filters-toggle {
+    --filters-drawer-width: min(14rem, 66vw);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    position: fixed;
+    top: 46%;
+    right: 0;
+    z-index: 3900;
+    width: 22px;
+    height: 52px;
     padding: 0;
     border: 1px solid var(--border-subtle);
-    border-radius: 999px;
-    background: rgba(20, 23, 31, 0.65);
-    color: var(--text);
+    border-right: 0;
+    border-radius: 10px 0 0 10px;
+    background: rgba(18, 20, 28, 0.94);
+    color: var(--accent);
+    box-shadow: -6px 0 18px rgba(0, 0, 0, 0.35);
     cursor: pointer;
+    transform: translateY(-50%);
+    transition: right 0.22s ease, background var(--transition-fast), color var(--transition-fast);
   }
 
-  .filters-toggle[aria-expanded="true"] {
+  .filters-toggle-chevron::before {
+    content: "‹";
+    font-size: 1.55rem;
+    line-height: 1;
+    font-weight: 600;
+  }
+
+  body.filters-open .filters-toggle {
+    right: var(--filters-drawer-width);
+    z-index: 4510;
     background: var(--accent);
     color: #16140c;
     border-color: var(--accent);
+  }
+
+  body.filters-open .filters-toggle-chevron::before {
+    content: "›";
   }
 
   .filters-drawer-head {
@@ -1298,7 +1320,7 @@ body {
     margin: 0;
     font-family: var(--font-display);
     letter-spacing: 0.04em;
-    font-size: 1.45rem;
+    font-size: 1.15rem;
     font-weight: 400;
   }
 
@@ -1327,17 +1349,18 @@ body {
     top: 0;
     right: 0;
     bottom: 0;
-    width: min(20.5rem, 88vw);
+    --filters-drawer-width: min(14rem, 66vw);
+    width: var(--filters-drawer-width);
     height: 100dvh;
     margin: 0;
-    border-radius: 20px 0 0 20px;
+    border-radius: 16px 0 0 16px;
     z-index: 4500;
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: stretch;
     justify-content: flex-start;
-    gap: 16px;
-    padding: 18px 16px 28px;
+    gap: 12px;
+    padding: 14px 12px 20px;
     overflow-y: auto;
     transform: translateX(100%);
     visibility: hidden;
@@ -1370,6 +1393,15 @@ body {
   .rank-tabs button,
   .view-toggle-group button {
     flex: 1;
+    padding-left: 6px;
+    padding-right: 6px;
+    font-size: 0.74rem;
+  }
+
+  .toolbar .search-group input,
+  .toolbar-filters select {
+    padding: 8px 10px;
+    font-size: 0.8rem;
   }
 
   .app-header,
@@ -1461,6 +1493,7 @@ body {
 
 @media (max-width: 760px) and (prefers-reduced-motion: reduce) {
   .filters-scrim,
+  .filters-toggle,
   .toolbar {
     transition: none;
   }

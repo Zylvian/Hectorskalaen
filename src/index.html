@@ -43,18 +43,6 @@
             <a class="nav-link is-active" href="index.html">Barer</a>
             <a class="nav-link" href="game.html">Spill</a>
           </nav>
-          <button
-            type="button"
-            class="filters-toggle"
-            id="filtersToggle"
-            aria-expanded="false"
-            aria-controls="filtersDrawer"
-            aria-label="Søk og filter"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M4 7h16M4 12h16M4 17h10" />
-            </svg>
-          </button>
         </div>
       </header>
 
@@ -166,6 +154,16 @@
       </footer>
     </div>
 
+    <button
+      type="button"
+      class="filters-toggle"
+      id="filtersToggle"
+      aria-expanded="false"
+      aria-controls="filtersDrawer"
+      aria-label="Vis søk og filter"
+    >
+      <span class="filters-toggle-chevron" aria-hidden="true"></span>
+    </button>
     <button type="button" id="filtersScrim" class="filters-scrim" hidden aria-label="Lukk meny"></button>
     <button type="button" id="dialogScrim" class="dialog-scrim" hidden aria-label="Lukk"></button>
     <dialog id="barDialog" class="bar-dialog">
