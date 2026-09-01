@@ -34,7 +34,7 @@ body {
 
 html::-webkit-scrollbar,
 body::-webkit-scrollbar,
-.bar-dialog::-webkit-scrollbar,
+.bar-dialog-scroll::-webkit-scrollbar,
 .comment-list::-webkit-scrollbar,
 .comment-list--hidden::-webkit-scrollbar {
   width: 8px;
@@ -43,7 +43,7 @@ body::-webkit-scrollbar,
 
 html::-webkit-scrollbar-track,
 body::-webkit-scrollbar-track,
-.bar-dialog::-webkit-scrollbar-track,
+.bar-dialog-scroll::-webkit-scrollbar-track,
 .comment-list::-webkit-scrollbar-track,
 .comment-list--hidden::-webkit-scrollbar-track {
   background: #14161c;
@@ -52,7 +52,7 @@ body::-webkit-scrollbar-track,
 
 html::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb,
-.bar-dialog::-webkit-scrollbar-thumb,
+.bar-dialog-scroll::-webkit-scrollbar-thumb,
 .comment-list::-webkit-scrollbar-thumb,
 .comment-list--hidden::-webkit-scrollbar-thumb {
   background: rgba(231, 193, 79, 0.45);
@@ -63,7 +63,7 @@ body::-webkit-scrollbar-thumb,
 
 html::-webkit-scrollbar-thumb:hover,
 body::-webkit-scrollbar-thumb:hover,
-.bar-dialog::-webkit-scrollbar-thumb:hover,
+.bar-dialog-scroll::-webkit-scrollbar-thumb:hover,
 .comment-list::-webkit-scrollbar-thumb:hover,
 .comment-list--hidden::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
@@ -71,7 +71,7 @@ body::-webkit-scrollbar-thumb:hover,
 
 html::-webkit-scrollbar-corner,
 body::-webkit-scrollbar-corner,
-.bar-dialog::-webkit-scrollbar-corner,
+.bar-dialog-scroll::-webkit-scrollbar-corner,
 .comment-list::-webkit-scrollbar-corner {
   background: transparent;
 }
@@ -724,16 +724,22 @@ body {
   z-index: 4010;
   width: min(720px, calc(100vw - 24px));
   max-height: calc(100vh - 32px);
-  overflow: auto;
+  overflow: hidden;
   border: 1px solid var(--border-subtle);
   border-radius: 24px;
   background: #101218;
   color: var(--text);
   padding: 0;
   box-shadow: var(--shadow-soft);
+  color-scheme: dark;
+}
+
+.bar-dialog-scroll {
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: rgba(231, 193, 79, 0.55) #14161c;
-  color-scheme: dark;
 }
 
 .bar-dialog::backdrop {
@@ -755,6 +761,10 @@ body {
   display: flex;
   justify-content: flex-end;
   padding: 12px 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: linear-gradient(#101218, #101218 70%, transparent);
 }
 
 .dialog-body {
