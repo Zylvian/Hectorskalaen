@@ -269,8 +269,11 @@
     statBars.textContent = String(bars.length);
     statVotes.textContent = String(voteTotal);
     statWorst.textContent = worst ? formatAverage(worst.average) : "–";
-    const worstLabel = document.getElementById("statWorstLabel");
-    if (worstLabel) worstLabel.textContent = worst ? worst.title : "Verst nå";
+    const worstName = document.getElementById("statWorstName");
+    if (worstName) {
+      worstName.textContent = worst ? worst.title : "Ingen score ennå";
+      worstName.title = worst ? `${worst.title} ligger høyest på Hectorskalaen` : "";
+    }
   }
 
   function createMonogram(bar) {
