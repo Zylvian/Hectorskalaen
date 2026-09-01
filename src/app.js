@@ -21,13 +21,9 @@
   const VISITOR_KEY = "hectorskalaen.visitorId";
   const MY_RATINGS_KEY = "hectorskalaen.myRatings";
   const COMMENT_MAX = 280;
-  /** Bergen sentrum: Torgallmenningen / Vågen / Engen. Outliers stay on the map but do not pull the start view. */
-  const MAP_SENTRUM_BOUNDS = [
-    [60.3896, 5.3186],
-    [60.3974, 5.3298],
-  ];
+  /** Torgallmenningen / Vågen. Outliers stay on the map but do not pull the start view. */
   const MAP_DEFAULT_CENTER = [60.393, 5.3242];
-  const MAP_DEFAULT_ZOOM = 15;
+  const MAP_DEFAULT_ZOOM = 16;
 
   /** @type {Array<any>} */
   let bars = [];
@@ -543,9 +539,9 @@
       const fitKey = `${rankingFilter}|${amenityFilter}|${search.toLowerCase()}`;
       if (fitKey !== mapFitKey) {
         if (search && bounds.length) {
-          map.fitBounds(bounds, { padding: [48, 48], maxZoom: 16 });
+          map.fitBounds(bounds, { padding: [48, 48], maxZoom: 17 });
         } else {
-          map.fitBounds(MAP_SENTRUM_BOUNDS, { padding: [24, 24], maxZoom: 16 });
+          map.setView(MAP_DEFAULT_CENTER, MAP_DEFAULT_ZOOM);
         }
         mapFitKey = fitKey;
       }
