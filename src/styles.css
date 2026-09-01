@@ -1293,7 +1293,7 @@ body {
     align-items: center;
     justify-content: center;
     position: fixed;
-    top: 46%;
+    top: 50%;
     right: 0;
     z-index: 3900;
     width: 44px;
@@ -1366,12 +1366,13 @@ body {
 
   .toolbar {
     position: fixed;
-    top: 0;
+    top: 50%;
     right: 0;
-    bottom: 0;
+    bottom: auto;
     --filters-drawer-width: min(14rem, 66vw);
     width: var(--filters-drawer-width);
-    height: 100dvh;
+    height: auto;
+    max-height: calc(100dvh - 24px);
     margin: 0;
     border-radius: 16px 0 0 16px;
     z-index: 4500;
@@ -1379,24 +1380,42 @@ body {
     flex-wrap: nowrap;
     align-items: stretch;
     justify-content: flex-start;
-    gap: 12px;
-    padding: 14px 12px 20px;
+    gap: 22px;
+    padding: 18px 14px 22px;
     overflow-y: auto;
-    transform: translateX(100%);
+    transform: translate(100%, -50%);
     visibility: hidden;
     pointer-events: none;
     transition: transform 0.22s ease, visibility 0.22s ease;
   }
 
   body.filters-open .toolbar {
-    transform: translateX(0);
+    transform: translate(0, -50%);
     visibility: visible;
     pointer-events: auto;
+  }
+
+  #filtersDrawer .search-group,
+  #filtersDrawer .toolbar-filters,
+  #filtersDrawer .filters-drawer-head {
+    flex: 0 0 auto;
+  }
+
+  .search-group {
+    width: 100%;
+    min-width: 0;
+    gap: 8px;
   }
 
   .toolbar-filters {
     flex-direction: column;
     align-items: stretch;
+    justify-content: flex-start;
+    gap: 18px;
+  }
+
+  #filtersDrawer .view-toggle-group {
+    margin-top: 0;
   }
 
   .toolbar-filters select,
