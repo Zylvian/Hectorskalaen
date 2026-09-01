@@ -21,6 +21,9 @@
   const VISITOR_KEY = "hectorskalaen.visitorId";
   const MY_RATINGS_KEY = "hectorskalaen.myRatings";
   const COMMENT_MAX = 280;
+  /** Torgallmenningen / Vågen. Outliers stay on the map but do not pull the start view. */
+  const MAP_DEFAULT_CENTER = [60.3935, 5.3238];
+  const MAP_DEFAULT_ZOOM = 15;
 
   /** @type {Array<any>} */
   let bars = [];
@@ -496,7 +499,7 @@
         map = L.map(el, {
           scrollWheelZoom: true,
           zoomControl: false,
-        }).setView([60.3913, 5.3221], 14);
+        }).setView(MAP_DEFAULT_CENTER, MAP_DEFAULT_ZOOM);
         L.control.zoom({ position: "bottomright" }).addTo(map);
         L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
           maxZoom: 19,
@@ -505,7 +508,6 @@
         }).addTo(map);
       }
       map.invalidateSize();
-      requestAnimationFrame(() => map?.invalidateSize());
       clearMapMarkers();
       const filtered = filteredBars();
       const bounds = [];
@@ -532,11 +534,19 @@
         mapMarkers.push(marker);
         bounds.push([bar.lat, bar.lon]);
       });
-      const fitKey = `${rankingFilter}|${amenityFilter}|${searchQuery.trim().toLowerCase()}`;
-      if (bounds.length && fitKey !== mapFitKey) {
-        map.fitBounds(bounds, { padding: [48, 48], maxZoom: 15 });
+      const search = searchQuery.trim();
+      const fitKey = `${rankingFilter}|${amenityFilter}|${search.toLowerCase()}`;
+      requestAnimationFrame(() => {
+        if (!map) return;
+        map.invalidateSize();
+        if (fitKey === mapFitKey) return;
+        if (search && bounds.length) {
+          map.fitBounds(bounds, { padding: [48, 48], maxZoom: 17 });
+        } else {
+          map.setView(MAP_DEFAULT_CENTER, MAP_DEFAULT_ZOOM);
+        }
         mapFitKey = fitKey;
-      }
+      });
       if (resultsSummary) {
         resultsSummary.textContent =
           rankingFilter === "rated"
