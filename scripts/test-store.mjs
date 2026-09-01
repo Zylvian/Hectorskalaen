@@ -1,4 +1,4 @@
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm, writeFile, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createRequire } from "node:module";
@@ -204,6 +204,13 @@ async function main() {
   );
   const pictureUrls = catalog.bars.map((bar) => bar.picture);
   assert(new Set(pictureUrls).size === pictureUrls.length, "picture URLs should be unique per bar");
+
+  const homepage = await readFile(new URL("../src/index.html", import.meta.url), "utf8");
+  assert(homepage.includes('id="map"'), "homepage should include a map canvas");
+  assert(homepage.includes('id="viewMap"'), "homepage should include a map view toggle");
+  const appJs = await readFile(new URL("../src/app.js", import.meta.url), "utf8");
+  assert(appJs.includes("mapHoverHtml"), "map hover card helper missing");
+  assert(appJs.includes("basemaps.cartocdn.com"), "map should use street tiles");
 
   await rm(dir, { recursive: true, force: true });
   console.log("All store and catalog checks passed.");
