@@ -4,6 +4,7 @@ const path = require("node:path");
 const SEED_VISITOR = "seed:editorial";
 const ALLOWED_ID = /^[a-z0-9:-]{3,80}$/i;
 const ALLOWED_VISITOR = /^[a-z0-9-]{8,64}$/i;
+const COMMENT_MAX = 280;
 
 let catalogCache = null;
 let backendPromise = null;
@@ -81,7 +82,31 @@ async function loadCatalog() {
 }
 
 function emptyStats() {
-  return { average: null, count: 0, histogram: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] };
+  return {
+    average: null,
+    count: 0,
+    histogram: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    comments: [],
+  };
+}
+
+function sanitizeComment(value) {
+  if (value == null) return "";
+  if (typeof value !== "string") {
+    throw httpError(400, "Ugyldig kommentar.");
+  }
+  const text = value
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (text.length > COMMENT_MAX) {
+    throw httpError(400, `Kommentaren er for lang (maks ${COMMENT_MAX} tegn).`);
+  }
+  const links = text.match(/https?:\/\//gi) || [];
+  if (links.length > 1) {
+    throw httpError(400, "Maks én lenke i kommentaren.");
+  }
+  return text;
 }
 
 function aggregate(rows) {
@@ -89,19 +114,36 @@ function aggregate(rows) {
   for (const row of rows) {
     let entry = byBar.get(row.barId);
     if (!entry) {
-      entry = { sum: 0, count: 0, histogram: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] };
+      entry = {
+        sum: 0,
+        count: 0,
+        histogram: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        comments: [],
+      };
       byBar.set(row.barId, entry);
     }
     entry.sum += row.score;
     entry.count += 1;
     entry.histogram[row.score - 1] += 1;
+    const text = typeof row.comment === "string" ? row.comment.trim() : "";
+    if (text && row.visitorId !== SEED_VISITOR) {
+      entry.comments.push({
+        score: row.score,
+        comment: text,
+        updatedAt: row.updatedAt || null,
+      });
+    }
   }
   const ratings = {};
   for (const [barId, entry] of byBar) {
+    entry.comments.sort((a, b) =>
+      String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""))
+    );
     ratings[barId] = {
       average: Math.round((entry.sum / entry.count) * 10) / 10,
       count: entry.count,
       histogram: entry.histogram,
+      comments: entry.comments.slice(0, 40),
     };
   }
   return ratings;
@@ -139,9 +181,11 @@ function createJsonBackend(filePath) {
         barId: r.barId,
         visitorId: r.visitorId,
         score: r.score,
+        comment: typeof r.comment === "string" ? r.comment : "",
+        updatedAt: r.updatedAt || r.createdAt || null,
       }));
     },
-    async upsert({ barId, visitorId, score, createdAt }) {
+    async upsert({ barId, visitorId, score, comment, createdAt }) {
       const data = await read();
       const idx = data.ratings.findIndex(
         (r) => r.barId === barId && r.visitorId === visitorId
@@ -150,6 +194,7 @@ function createJsonBackend(filePath) {
         data.ratings[idx] = {
           ...data.ratings[idx],
           score,
+          comment,
           updatedAt: createdAt,
         };
       } else {
@@ -157,6 +202,7 @@ function createJsonBackend(filePath) {
           barId,
           visitorId,
           score,
+          comment,
           createdAt,
           updatedAt: createdAt,
         });
@@ -196,6 +242,8 @@ function mapTursoRows(result) {
     barId: row.bar_id,
     visitorId: row.visitor_id,
     score: Number(row.score),
+    comment: typeof row.comment === "string" ? row.comment : "",
+    updatedAt: row.updated_at || row.created_at || null,
   }));
 }
 
@@ -211,6 +259,7 @@ function createTursoBackend(url, authToken) {
         bar_id TEXT NOT NULL,
         visitor_id TEXT NOT NULL,
         score INTEGER NOT NULL CHECK (score >= 1 AND score <= 10),
+        comment TEXT,
         created_at TEXT NOT NULL DEFAULT (datetime('now')),
         updated_at TEXT NOT NULL DEFAULT (datetime('now')),
         PRIMARY KEY (bar_id, visitor_id)
@@ -219,6 +268,12 @@ function createTursoBackend(url, authToken) {
     await client.execute(
       `CREATE INDEX IF NOT EXISTS ratings_bar_id ON ratings (bar_id)`
     );
+    try {
+      await client.execute(`ALTER TABLE ratings ADD COLUMN comment TEXT`);
+    } catch (err) {
+      const message = String(err && err.message ? err.message : err);
+      if (!/duplicate column|already exists/i.test(message)) throw err;
+    }
     ready = true;
   }
 
@@ -226,21 +281,22 @@ function createTursoBackend(url, authToken) {
     async allRows() {
       await ensureSchema();
       const result = await client.execute(
-        "SELECT bar_id, visitor_id, score FROM ratings"
+        "SELECT bar_id, visitor_id, score, comment, created_at, updated_at FROM ratings"
       );
       return mapTursoRows(result);
     },
-    async upsert({ barId, visitorId, score, createdAt }) {
+    async upsert({ barId, visitorId, score, comment, createdAt }) {
       await ensureSchema();
       await client.execute({
         sql: `
-          INSERT INTO ratings (bar_id, visitor_id, score, created_at, updated_at)
-          VALUES (?, ?, ?, ?, ?)
+          INSERT INTO ratings (bar_id, visitor_id, score, comment, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?)
           ON CONFLICT(bar_id, visitor_id) DO UPDATE SET
             score = excluded.score,
+            comment = excluded.comment,
             updated_at = excluded.updated_at
         `,
-        args: [barId, visitorId, score, createdAt, createdAt],
+        args: [barId, visitorId, score, comment, createdAt, createdAt],
       });
     },
     async seedIfEmpty(seeds) {
@@ -281,7 +337,7 @@ async function getAggregates() {
   };
 }
 
-async function upsertRating({ barId, score, visitorId }) {
+async function upsertRating({ barId, score, visitorId, comment }) {
   if (typeof barId !== "string" || !ALLOWED_ID.test(barId)) {
     throw httpError(400, "Ugyldig bar.");
   }
@@ -291,6 +347,7 @@ async function upsertRating({ barId, score, visitorId }) {
   if (typeof visitorId !== "string" || !ALLOWED_VISITOR.test(visitorId)) {
     throw httpError(400, "Mangler gyldig besøks-id.");
   }
+  const cleanComment = sanitizeComment(comment);
 
   const { backend, catalog } = await getBackend();
   if (!catalog.ids.has(barId)) {
@@ -301,6 +358,7 @@ async function upsertRating({ barId, score, visitorId }) {
     barId,
     visitorId,
     score,
+    comment: cleanComment,
     createdAt: new Date().toISOString(),
   });
 
@@ -324,4 +382,5 @@ module.exports = {
   resetForTests,
   persistenceMode,
   SEED_VISITOR,
+  COMMENT_MAX,
 };

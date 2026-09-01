@@ -68,6 +68,7 @@ async function handleApi(req, res) {
           barId: body.barId,
           score: Number(body.score),
           visitorId: body.visitorId,
+          comment: body.comment,
         })
       );
       return;

@@ -43,6 +43,7 @@ module.exports = async function (context, req) {
           barId: body.barId,
           score: Number(body.score),
           visitorId: body.visitorId,
+          comment: body.comment,
         })
       );
       return;

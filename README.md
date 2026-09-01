@@ -39,8 +39,11 @@ npm test
 
 - Catalog (names, coordinates, photos, original write-ups) lives in `src/bars.json`.
 - Votes live in the `/api/ratings` function (`GET` aggregates, `POST` upsert).
+- Each anonymous visitor can leave **one score and one optional comment per bar**. Updating replaces the previous vote; it does not stack.
+- Comments are trimmed, capped at 280 characters, and shown on the bar page. Editorial seed scores have no comments.
+- The homepage lists bars that already have a score. Use **Uten score** to browse the rest.
 - The ten original scores are seeded once as editorial votes so the old ranking is the starting point, not a wipe.
-- Each browser gets an anonymous id in `localStorage`. Re-rating the same bar updates that vote.
+- Each browser gets an anonymous id in `localStorage`. Re-rating the same bar updates that vote and comment.
 
 ### Production database (Turso)
 

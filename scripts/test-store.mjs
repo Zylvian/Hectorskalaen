@@ -42,7 +42,48 @@ async function main() {
   assert(changed.stats.count === 2, "updating a vote should not add another");
   assert(changed.stats.average === 7, `expected 7, got ${changed.stats.average}`);
 
+  const withComment = await store.upsertRating({
+    barId: "osm-n2839876148",
+    score: 6,
+    visitorId,
+    comment: "  Lukter kjeller, men greit øl.  ",
+  });
+  assert(withComment.stats.count === 2, "comment should not add another vote");
+  assert(withComment.stats.average === 8, `expected 8, got ${withComment.stats.average}`);
+  assert(withComment.stats.comments.length === 1, "one public comment");
+  assert(
+    withComment.stats.comments[0].comment === "Lukter kjeller, men greit øl.",
+    "comment should be trimmed"
+  );
+  assert(withComment.stats.comments[0].score === 6, "comment should keep the score");
+
+  const updatedComment = await store.upsertRating({
+    barId: "osm-n2839876148",
+    score: 5,
+    visitorId,
+    comment: "Oppdatert: merkbart, ikke verst.",
+  });
+  assert(updatedComment.stats.count === 2, "updating comment should still be one vote");
+  assert(updatedComment.stats.comments.length === 1, "still one comment after update");
+  assert(
+    updatedComment.stats.comments[0].comment === "Oppdatert: merkbart, ikke verst.",
+    "comment should be replaced, not stacked"
+  );
+
   let failed = false;
+  try {
+    await store.upsertRating({
+      barId: "osm-n2839876148",
+      score: 5,
+      visitorId,
+      comment: "x".repeat(300),
+    });
+  } catch (err) {
+    failed = err.status === 400;
+  }
+  assert(failed, "overlong comment should be rejected");
+
+  failed = false;
   try {
     await store.upsertRating({ barId: "osm-n2839876148", score: 11, visitorId });
   } catch (err) {
