@@ -29,7 +29,7 @@ body {
   min-height: 100%;
   color-scheme: dark;
   scrollbar-width: thin;
-  scrollbar-color: rgba(231, 193, 79, 0.55) #14161c;
+  scrollbar-color: #c9ae4e #1a1c24;
 }
 
 html::-webkit-scrollbar,
@@ -37,8 +37,8 @@ body::-webkit-scrollbar,
 .bar-dialog-scroll::-webkit-scrollbar,
 .comment-list::-webkit-scrollbar,
 .comment-list--hidden::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 html::-webkit-scrollbar-track,
@@ -46,7 +46,7 @@ body::-webkit-scrollbar-track,
 .bar-dialog-scroll::-webkit-scrollbar-track,
 .comment-list::-webkit-scrollbar-track,
 .comment-list--hidden::-webkit-scrollbar-track {
-  background: #14161c;
+  background: #1a1c24;
   border-radius: 999px;
 }
 
@@ -55,7 +55,7 @@ body::-webkit-scrollbar-thumb,
 .bar-dialog-scroll::-webkit-scrollbar-thumb,
 .comment-list::-webkit-scrollbar-thumb,
 .comment-list--hidden::-webkit-scrollbar-thumb {
-  background: rgba(231, 193, 79, 0.45);
+  background: #c9ae4e;
   border-radius: 999px;
   border: 2px solid #101218;
   background-clip: padding-box;
@@ -66,7 +66,7 @@ body::-webkit-scrollbar-thumb:hover,
 .bar-dialog-scroll::-webkit-scrollbar-thumb:hover,
 .comment-list::-webkit-scrollbar-thumb:hover,
 .comment-list--hidden::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
+  background: var(--accent-strong);
 }
 
 html::-webkit-scrollbar-corner,
@@ -78,7 +78,7 @@ body::-webkit-scrollbar-corner,
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(231, 193, 79, 0.55) #14161c;
+  scrollbar-color: #c9ae4e #1a1c24;
 }
 
 body {
@@ -739,7 +739,7 @@ body {
   overflow: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: rgba(231, 193, 79, 0.55) #14161c;
+  scrollbar-color: #c9ae4e #1a1c24;
 }
 
 .bar-dialog::backdrop {
@@ -1020,7 +1020,7 @@ body {
   max-height: 240px;
   overflow: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(231, 193, 79, 0.55) #14161c;
+  scrollbar-color: #c9ae4e #1a1c24;
 }
 
 .comment-list li {
