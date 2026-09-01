@@ -119,10 +119,28 @@
     return `hsl(${hue.toFixed(0)} ${sat.toFixed(0)}% ${light.toFixed(0)}%)`;
   }
 
+  function roundToTenth(value) {
+    return Math.round((Number(value) + Number.EPSILON) * 10) / 10;
+  }
+
+  function averageFromHistogram(histogram) {
+    if (!Array.isArray(histogram) || histogram.length < 10) return null;
+    let sum = 0;
+    let count = 0;
+    for (let score = 1; score <= 10; score += 1) {
+      const n = Number(histogram[score - 1]) || 0;
+      sum += score * n;
+      count += n;
+    }
+    if (count <= 0) return null;
+    return roundToTenth(sum / count);
+  }
+
   function displayScore(bar) {
     const live = ratings[bar.id];
     if (live && live.count > 0 && typeof live.average === "number") {
-      return { ...live, comments: live.comments || [] };
+      const average = averageFromHistogram(live.histogram) ?? roundToTenth(live.average);
+      return { ...live, average, comments: live.comments || [] };
     }
     if (typeof bar.seedRating === "number") {
       return {
@@ -151,8 +169,9 @@
   }
 
   function formatAverage(value) {
-    if (value == null) return "–";
-    return Number.isInteger(value) ? String(value) : value.toFixed(1);
+    if (value == null || !Number.isFinite(Number(value))) return "–";
+    const rounded = roundToTenth(value);
+    return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
   }
 
   function haversineKm(a, b) {
@@ -319,6 +338,9 @@
     const number = document.createElement("span");
     number.className = "bar-rating-overlay-number";
     number.textContent = scored ? formatAverage(stats.average) : "?";
+    if (scored && String(number.textContent).includes(".")) {
+      overlay.classList.add("bar-rating-overlay--decimal");
+    }
     const label = document.createElement("span");
     label.className = "bar-rating-overlay-label";
     label.textContent = "/10";
@@ -425,12 +447,13 @@
   function mapPinIcon(bar, stats, color) {
     const label = stats.average == null ? "?" : formatAverage(stats.average);
     const selected = selectedMapBarId === bar.id ? " is-selected" : "";
+    const decimal = label.includes(".") ? " map-pin--decimal" : "";
     return L.divIcon({
       className: "map-pin-wrap",
       iconSize: [36, 46],
       iconAnchor: [18, 44],
       tooltipAnchor: [0, -42],
-      html: `<div class="map-pin${selected}" data-bar-id="${escapeHtml(bar.id)}" style="--pin-color:${color}"><span>${escapeHtml(label)}</span></div>`,
+      html: `<div class="map-pin${selected}${decimal}" data-bar-id="${escapeHtml(bar.id)}" style="--pin-color:${color}"><span>${escapeHtml(label)}</span></div>`,
     });
   }
 
