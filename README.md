@@ -26,7 +26,7 @@ npm start
 
 Then open http://localhost:8000
 
-- `/` — browse, search, sort, map, and rate
+- `/` — browse, search, sort, map (hover a pin for photo + score, click for votes and comments), and rate
 - `/game.html` — guess the community average
 
 ```bash

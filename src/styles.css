@@ -471,20 +471,86 @@ body {
 }
 
 .map-panel {
-  min-height: 68vh;
+  position: relative;
+  min-height: 72vh;
   border-radius: 20px;
   overflow: hidden;
   border: 1px solid var(--border-subtle);
 }
 
+.map-hint {
+  position: absolute;
+  z-index: 500;
+  left: 12px;
+  top: 12px;
+  margin: 0;
+  max-width: min(360px, calc(100% - 24px));
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(16, 18, 24, 0.88);
+  border: 1px solid var(--border-subtle);
+  color: var(--text);
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+
 .map-canvas {
-  height: 68vh;
+  height: 72vh;
   width: 100%;
-  background: #111;
+  background: #e6e2d6;
 }
 
 .leaflet-container {
   font-family: var(--font-body);
+  background: #e6e2d6;
+}
+
+.leaflet-control-zoom a {
+  background: #101218;
+  color: var(--text);
+  border: 1px solid var(--border-subtle);
+}
+
+.leaflet-control-zoom a:hover {
+  background: #1c1f28;
+  color: var(--accent);
+}
+
+.leaflet-bar {
+  border: 0;
+  box-shadow: var(--shadow-soft);
+}
+
+.map-pin-wrap {
+  background: none;
+  border: none;
+}
+
+.map-pin {
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 4px;
+  transform: rotate(-45deg);
+  background: var(--pin-color, #e7c14f);
+  border: 2px solid #101218;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  display: grid;
+  place-items: center;
+}
+
+.map-pin span {
+  transform: rotate(45deg);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  color: #101218;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.map-pin.is-selected {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+  transform: rotate(-45deg) scale(1.12);
 }
 
 .leaflet-tooltip.map-hover-tooltip {
@@ -502,16 +568,24 @@ body {
 }
 
 .map-hover-card {
-  width: 196px;
+  width: 220px;
 }
 
 .map-hover-image {
   display: block;
   width: 100%;
-  height: 120px;
+  height: 132px;
   object-fit: cover;
   border-radius: 14px 14px 0 0;
   background: #171821;
+}
+
+.map-hover-image--empty {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  color: var(--text-muted);
 }
 
 .map-hover-copy {
@@ -522,13 +596,18 @@ body {
 }
 
 .map-hover-copy strong {
-  font-size: 0.92rem;
+  font-size: 0.95rem;
 }
 
 .map-hover-score {
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   letter-spacing: 0.03em;
+}
+
+.map-hover-meta {
+  color: var(--text-muted);
+  font-size: 0.75rem;
 }
 
 .app-footer {
@@ -611,6 +690,18 @@ body {
 
 .dialog-links a {
   color: var(--accent);
+}
+
+.histogram-wrap {
+  margin: 8px 0 4px;
+}
+
+.histogram-label {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .histogram {

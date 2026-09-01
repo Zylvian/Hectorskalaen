@@ -36,6 +36,8 @@
   let userLocation = null;
   let map = null;
   let mapMarkers = [];
+  let mapFitKey = "";
+  let selectedMapBarId = null;
   let persistence = "unknown";
 
   const searchInput = document.getElementById("searchInput");
@@ -415,6 +417,36 @@
     mapMarkers = [];
   }
 
+  function mapPinIcon(bar, stats, color) {
+    const label = stats.average == null ? "?" : formatAverage(stats.average);
+    const selected = selectedMapBarId === bar.id ? " is-selected" : "";
+    return L.divIcon({
+      className: "map-pin-wrap",
+      iconSize: [36, 46],
+      iconAnchor: [18, 44],
+      tooltipAnchor: [0, -42],
+      html: `<div class="map-pin${selected}" data-bar-id="${escapeHtml(bar.id)}" style="--pin-color:${color}"><span>${escapeHtml(label)}</span></div>`,
+    });
+  }
+
+  function mapHoverHtml(bar, stats, color) {
+    const picture = bar.picture
+      ? `<img class="map-hover-image" src="${escapeHtml(bar.picture)}" alt="${escapeHtml(bar.title)}" loading="lazy" referrerpolicy="no-referrer">`
+      : `<div class="map-hover-image map-hover-image--empty">${escapeHtml(initial(bar.title))}</div>`;
+    const votes =
+      stats.average == null
+        ? "Ingen score ennå"
+        : `${stats.count} ${stats.count === 1 ? "stemme" : "stemmer"}`;
+    return `<div class="map-hover-card">
+      ${picture}
+      <div class="map-hover-copy">
+        <strong>${escapeHtml(bar.title)}</strong>
+        <span class="map-hover-score" style="color:${color}">${formatAverage(stats.average)}/10</span>
+        <span class="map-hover-meta">${escapeHtml(votes)} · klikk for kommentarer</span>
+      </div>
+    </div>`;
+  }
+
   function renderMap() {
     if (listWrapper) listWrapper.hidden = true;
     if (mapPanel) mapPanel.hidden = false;
@@ -429,10 +461,15 @@
       const el = document.getElementById("map");
       if (!el) return;
       if (!map) {
-        map = L.map(el, { scrollWheelZoom: true }).setView([60.392, 5.324], 14);
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        map = L.map(el, {
+          scrollWheelZoom: true,
+          zoomControl: false,
+        }).setView([60.3913, 5.3221], 14);
+        L.control.zoom({ position: "bottomright" }).addTo(map);
+        L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
           maxZoom: 19,
-          attribution: "&copy; OpenStreetMap",
+          attribution:
+            "Tiles &copy; Esri — Source: Esri, TomTom, Garmin, FAO, NOAA, USGS",
         }).addTo(map);
       }
       map.invalidateSize();
@@ -443,43 +480,35 @@
         if (!Number.isFinite(bar.lat) || !Number.isFinite(bar.lon)) return;
         const stats = displayScore(bar);
         const color = stats.average == null ? "#e7c14f" : ratingColor(stats.average);
-        const picture = bar.picture
-          ? `<img class="map-hover-image" src="${escapeHtml(bar.picture)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
-          : "";
-        const marker = L.circleMarker([bar.lat, bar.lon], {
-          radius: 10,
-          color: "#07080d",
-          weight: 1,
-          fillColor: color,
-          fillOpacity: 0.95,
+        const marker = L.marker([bar.lat, bar.lon], {
+          icon: mapPinIcon(bar, stats, color),
+          riseOnHover: true,
+          keyboard: true,
         }).addTo(map);
-        marker.bindTooltip(
-          `<div class="map-hover-card">
-            ${picture}
-            <div class="map-hover-copy">
-              <strong>${escapeHtml(bar.title)}</strong>
-              <span class="map-hover-score" style="color:${color}">${formatAverage(stats.average)}/10</span>
-            </div>
-          </div>`,
-          {
-            direction: "top",
-            opacity: 1,
-            sticky: true,
-            className: "map-hover-tooltip",
-          }
-        );
-        marker.on("click", () => openBar(bar.id));
+        marker.bindTooltip(mapHoverHtml(bar, stats, color), {
+          direction: "top",
+          opacity: 1,
+          sticky: false,
+          interactive: false,
+          className: "map-hover-tooltip",
+        });
+        marker.on("click", () => {
+          marker.closeTooltip();
+          openBar(bar.id);
+        });
         mapMarkers.push(marker);
         bounds.push([bar.lat, bar.lon]);
       });
-      if (bounds.length) {
-        map.fitBounds(bounds, { padding: [36, 36], maxZoom: 15 });
+      const fitKey = `${rankingFilter}|${amenityFilter}|${searchQuery.trim().toLowerCase()}`;
+      if (bounds.length && fitKey !== mapFitKey) {
+        map.fitBounds(bounds, { padding: [48, 48], maxZoom: 15 });
+        mapFitKey = fitKey;
       }
       if (resultsSummary) {
         resultsSummary.textContent =
           rankingFilter === "rated"
-            ? `${filtered.length} vurderte barer på kartet.`
-            : `${filtered.length} barer uten score på kartet.`;
+            ? `${filtered.length} vurderte barer på kartet. Hold over en pin for bilde og score.`
+            : `${filtered.length} barer uten score på kartet. Hold over en pin for bilde.`;
       }
     };
 
@@ -503,15 +532,18 @@
       return `<p class="dialog-empty">Ingen folkestemmer ennå. Vær først ut.</p>`;
     }
     const max = Math.max(...histogram, 1);
-    return `<ol class="histogram">${histogram
-      .map((value, index) => {
-        const height = Math.max(8, Math.round((value / max) * 72));
-        return `<li>
+    return `<div class="histogram-wrap">
+      <p class="histogram-label">Fordeling av stemmer</p>
+      <ol class="histogram">${histogram
+        .map((value, index) => {
+          const height = Math.max(8, Math.round((value / max) * 72));
+          return `<li>
           <span class="histogram-bar" style="height:${height}px;background:${ratingColor(index + 1)}"></span>
           <span>${index + 1}</span>
         </li>`;
-      })
-      .join("")}</ol>`;
+        })
+        .join("")}</ol>
+    </div>`;
   }
 
   function voteCount(value) {
@@ -564,6 +596,10 @@
   function openBar(barId, { reopen = true } = {}) {
     const bar = bars.find((item) => item.id === barId);
     if (!bar || !barDialog || !dialogBody) return;
+    selectedMapBarId = barId;
+    document.querySelectorAll(".map-pin").forEach((el) => {
+      el.classList.toggle("is-selected", el.getAttribute("data-bar-id") === barId);
+    });
     const stats = displayScore(bar);
     const mine = myVote(bar.id);
     const website = bar.website ? safeUrl(bar.website) : null;
@@ -937,6 +973,12 @@
     if (barDialog) {
       barDialog.addEventListener("click", (event) => {
         if (event.target === barDialog) barDialog.close();
+      });
+      barDialog.addEventListener("close", () => {
+        selectedMapBarId = null;
+        document.querySelectorAll(".map-pin.is-selected").forEach((el) => {
+          el.classList.remove("is-selected");
+        });
       });
     }
   }
