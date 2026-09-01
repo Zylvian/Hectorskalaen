@@ -28,7 +28,7 @@
   let ratings = {};
   let searchQuery = "";
   let sortMode = "worst";
-  let viewMode = "grid";
+  let viewMode = "map";
   let amenityFilter = "all";
   let rankingFilter = "rated";
   let commentSort = "upvotes";

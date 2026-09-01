@@ -27,7 +27,7 @@ const CURATED_OSM_NAME = {
   "Kulturhuset i Bergen": "Kulturhuset",
   "Henrik øl- og vinstove": "Henrik øl og vinstove",
   Rævadilter: "Rævedilter",
-  "Gamle fotballpubben": "Fotballpubben",
+  "Fotballpubben": "Fotballpubben",
   Legal: "Legal",
   "Kvarteret - Grøndahls": "Grøndahl",
   "Folk & Røvere": "Folk og Røvere",
