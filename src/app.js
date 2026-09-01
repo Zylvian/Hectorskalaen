@@ -433,16 +433,31 @@
         if (!Number.isFinite(bar.lat) || !Number.isFinite(bar.lon)) return;
         const stats = displayScore(bar);
         const color = stats.average == null ? "#e7c14f" : ratingColor(stats.average);
+        const picture = bar.picture
+          ? `<img class="map-hover-image" src="${escapeHtml(bar.picture)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
+          : "";
         const marker = L.circleMarker([bar.lat, bar.lon], {
-          radius: 9,
+          radius: 10,
           color: "#07080d",
           weight: 1,
           fillColor: color,
           fillOpacity: 0.95,
         }).addTo(map);
-        marker.bindTooltip(`${bar.title} · ${formatAverage(stats.average)}/10`, {
-          direction: "top",
-        });
+        marker.bindTooltip(
+          `<div class="map-hover-card">
+            ${picture}
+            <div class="map-hover-copy">
+              <strong>${escapeHtml(bar.title)}</strong>
+              <span class="map-hover-score" style="color:${color}">${formatAverage(stats.average)}/10</span>
+            </div>
+          </div>`,
+          {
+            direction: "top",
+            opacity: 1,
+            sticky: true,
+            className: "map-hover-tooltip",
+          }
+        );
         marker.on("click", () => openBar(bar.id));
         mapMarkers.push(marker);
         bounds.push([bar.lat, bar.lon]);
