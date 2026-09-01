@@ -56,11 +56,24 @@ async function handleApi(req, res) {
 
   try {
     if (req.method === "GET") {
-      sendJson(res, 200, await store.getAggregates());
+      sendJson(res, 200, await store.getAggregates(url.searchParams.get("visitorId")));
       return;
     }
     if (req.method === "POST") {
       const body = await readBody(req);
+      if (body.commentId != null || body.vote != null) {
+        sendJson(
+          res,
+          200,
+          await store.upsertCommentVote({
+            barId: body.barId,
+            commentId: body.commentId,
+            visitorId: body.visitorId,
+            vote: body.vote,
+          })
+        );
+        return;
+      }
       sendJson(
         res,
         200,

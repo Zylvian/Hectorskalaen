@@ -495,12 +495,23 @@
       return `<p class="dialog-empty">Ingen kommentarer ennå. Du kan legge igjen en sammen med stemmen.</p>`;
     }
     return `<ul class="comment-list">${list
-      .map(
-        (item) => `<li>
+      .map((item) => {
+        const upActive = item.myVote === 1 ? " is-active" : "";
+        const downActive = item.myVote === -1 ? " is-active" : "";
+        const voteControls = item.own
+          ? `<p class="comment-own">Din kommentar</p>`
+          : `<div class="comment-votes">
+              <button type="button" class="comment-vote comment-vote--up${upActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="1" aria-label="Like">↑ ${item.upvotes || 0}</button>
+              <button type="button" class="comment-vote comment-vote--down${downActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="-1" aria-label="Dislike">↓ ${item.downvotes || 0}</button>
+            </div>`;
+        return `<li>
           <span class="comment-score" style="color:${ratingColor(item.score)}">${item.score}/10</span>
-          <p>${escapeHtml(item.comment)}</p>
-        </li>`
-      )
+          <div class="comment-body">
+            <p>${escapeHtml(item.comment)}</p>
+            ${voteControls}
+          </div>
+        </li>`;
+      })
       .join("")}</ul>`;
   }
 
@@ -547,6 +558,7 @@
         <p class="rate-status" id="rateStatus"></p>
         <section class="comment-section" aria-label="Kommentarer">
           <h3>Kommentarer</h3>
+          <p class="comment-sort-note">Sortert etter flest likes</p>
           ${commentsHtml(stats.comments)}
         </section>
       </div>
@@ -592,10 +604,44 @@
         void submitRating(bar, selectedScore);
       });
     }
+    bindCommentVotes(bar);
     if (reopen && typeof barDialog.showModal === "function" && !barDialog.open) {
       barDialog.showModal();
     } else if (reopen && !barDialog.open) {
       barDialog.setAttribute("open", "");
+    }
+  }
+
+  function bindCommentVotes(bar) {
+    dialogBody?.querySelectorAll(".comment-vote").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        void voteOnComment(bar, btn.getAttribute("data-comment-id"), Number(btn.getAttribute("data-vote")));
+      });
+    });
+  }
+
+  async function voteOnComment(bar, commentId, vote) {
+    const status = document.getElementById("rateStatus");
+    try {
+      const response = await fetch("/api/ratings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          barId: bar.id,
+          commentId,
+          visitorId: visitorId(),
+          vote,
+        }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Kunne ikke lagre stemmen.");
+      ratings = payload.ratings || ratings;
+      if (payload.stats) ratings[bar.id] = payload.stats;
+      persistence = payload.persistence || persistence;
+      openBar(bar.id, { reopen: false });
+      render();
+    } catch (err) {
+      if (status) status.textContent = err.message || "Noe gikk galt.";
     }
   }
 
@@ -838,7 +884,9 @@
 
   async function loadRatings() {
     try {
-      const response = await fetch("/api/ratings", { cache: "no-store" });
+      const response = await fetch(`/api/ratings?visitorId=${encodeURIComponent(visitorId())}`, {
+        cache: "no-store",
+      });
       if (!response.ok) return;
       const json = await response.json();
       ratings = json.ratings || {};

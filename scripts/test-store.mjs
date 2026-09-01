@@ -70,7 +70,48 @@ async function main() {
     "comment should be replaced, not stacked"
   );
 
+  const otherVisitor = "22222222-2222-4222-8222-222222222222";
+  const liked = await store.upsertCommentVote({
+    barId: "osm-n2839876148",
+    commentId: updatedComment.stats.comments[0].id,
+    visitorId: otherVisitor,
+    vote: 1,
+  });
+  assert(liked.stats.comments[0].upvotes === 1, "comment should have one like");
+  assert(liked.stats.comments[0].downvotes === 0, "no dislikes yet");
+  assert(liked.stats.comments[0].myVote === 1, "viewer like should be marked");
+
+  const disliked = await store.upsertCommentVote({
+    barId: "osm-n2839876148",
+    commentId: updatedComment.stats.comments[0].id,
+    visitorId: otherVisitor,
+    vote: -1,
+  });
+  assert(disliked.stats.comments[0].upvotes === 0, "switching to dislike clears the like");
+  assert(disliked.stats.comments[0].downvotes === 1, "dislike should count");
+
+  const toggledOff = await store.upsertCommentVote({
+    barId: "osm-n2839876148",
+    commentId: updatedComment.stats.comments[0].id,
+    visitorId: otherVisitor,
+    vote: -1,
+  });
+  assert(toggledOff.stats.comments[0].downvotes === 0, "clicking dislike again should undo");
+
   let failed = false;
+  try {
+    await store.upsertCommentVote({
+      barId: "osm-n2839876148",
+      commentId: updatedComment.stats.comments[0].id,
+      visitorId,
+      vote: 1,
+    });
+  } catch (err) {
+    failed = err.status === 400;
+  }
+  assert(failed, "author should not like their own comment");
+
+  failed = false;
   try {
     await store.upsertRating({
       barId: "osm-n2839876148",

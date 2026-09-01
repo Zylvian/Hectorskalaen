@@ -40,6 +40,7 @@ npm test
 - Catalog (names, coordinates, photos, original write-ups) lives in `src/bars.json`.
 - Votes live in the `/api/ratings` function (`GET` aggregates, `POST` upsert).
 - Each anonymous visitor can leave **one score and one optional comment per bar**. Updating replaces the previous vote; it does not stack.
+- Others can like or dislike a comment (one vote per visitor; click again to undo). Comments are sorted by most likes.
 - Comments are trimmed, capped at 280 characters, and shown on the bar page. Editorial seed scores have no comments.
 - The homepage lists bars that already have a score. Use **Uten score** to browse the rest.
 - The ten original scores are seeded once as editorial votes so the old ranking is the starting point, not a wipe.

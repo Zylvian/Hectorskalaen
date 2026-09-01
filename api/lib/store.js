@@ -1,10 +1,12 @@
 const { readFile, writeFile, mkdir } = require("node:fs/promises");
 const path = require("node:path");
+const { createHash } = require("node:crypto");
 
 const SEED_VISITOR = "seed:editorial";
 const ALLOWED_ID = /^[a-z0-9:-]{3,80}$/i;
 const ALLOWED_VISITOR = /^[a-z0-9-]{8,64}$/i;
 const COMMENT_MAX = 280;
+const ALLOWED_COMMENT_ID = /^[a-f0-9]{16}$/;
 
 let catalogCache = null;
 let backendPromise = null;
@@ -90,6 +92,22 @@ function emptyStats() {
   };
 }
 
+function publicCommentId(barId, visitorId) {
+  return createHash("sha256").update(`${barId}:${visitorId}`).digest("hex").slice(0, 16);
+}
+
+function tallyVotes(votes, barId, authorId, viewerId) {
+  let upvotes = 0;
+  let downvotes = 0;
+  let myVote = 0;
+  for (const vote of votes) {
+    if (vote.barId !== barId || vote.authorId !== authorId) continue;
+    if (vote.value === 1) upvotes += 1;
+    else if (vote.value === -1) downvotes += 1;
+    if (viewerId && vote.voterId === viewerId) myVote = vote.value;
+  }
+  return { upvotes, downvotes, myVote };
+}
 function sanitizeComment(value) {
   if (value == null) return "";
   if (typeof value !== "string") {
@@ -109,7 +127,7 @@ function sanitizeComment(value) {
   return text;
 }
 
-function aggregate(rows) {
+function aggregate(rows, votes = [], viewerId = null) {
   const byBar = new Map();
   for (const row of rows) {
     let entry = byBar.get(row.barId);
@@ -127,17 +145,26 @@ function aggregate(rows) {
     entry.histogram[row.score - 1] += 1;
     const text = typeof row.comment === "string" ? row.comment.trim() : "";
     if (text && row.visitorId !== SEED_VISITOR) {
+      const counts = tallyVotes(votes, row.barId, row.visitorId, viewerId);
       entry.comments.push({
+        id: publicCommentId(row.barId, row.visitorId),
         score: row.score,
         comment: text,
         updatedAt: row.updatedAt || null,
+        upvotes: counts.upvotes,
+        downvotes: counts.downvotes,
+        myVote: counts.myVote,
+        own: Boolean(viewerId && viewerId === row.visitorId),
       });
     }
   }
   const ratings = {};
   for (const [barId, entry] of byBar) {
-    entry.comments.sort((a, b) =>
-      String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""))
+    entry.comments.sort(
+      (a, b) =>
+        b.upvotes - a.upvotes ||
+        a.downvotes - b.downvotes ||
+        String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""))
     );
     ratings[barId] = {
       average: Math.round((entry.sum / entry.count) * 10) / 10,
@@ -156,15 +183,18 @@ function httpError(status, message) {
 }
 
 function createJsonBackend(filePath) {
-  let mem = { ratings: [] };
+  let mem = { ratings: [], votes: [] };
 
   async function read() {
     try {
       const raw = JSON.parse(await readFile(filePath, "utf8"));
-      mem = { ratings: Array.isArray(raw.ratings) ? raw.ratings : [] };
+      mem = {
+        ratings: Array.isArray(raw.ratings) ? raw.ratings : [],
+        votes: Array.isArray(raw.votes) ? raw.votes : [],
+      };
     } catch (err) {
       if (err.code !== "ENOENT") throw err;
-      mem = { ratings: [] };
+      mem = { ratings: [], votes: [] };
     }
     return mem;
   }
@@ -205,6 +235,41 @@ function createJsonBackend(filePath) {
           comment,
           createdAt,
           updatedAt: createdAt,
+        });
+      }
+      mem = data;
+      await write();
+    },
+    async allVotes() {
+      const data = await read();
+      return (data.votes || []).map((v) => ({
+        barId: v.barId,
+        authorId: v.authorId,
+        voterId: v.voterId,
+        value: Number(v.value),
+      }));
+    },
+    async upsertVote({ barId, authorId, voterId, value }) {
+      const data = await read();
+      if (!Array.isArray(data.votes)) data.votes = [];
+      const idx = data.votes.findIndex(
+        (v) => v.barId === barId && v.authorId === authorId && v.voterId === voterId
+      );
+      if (idx >= 0 && data.votes[idx].value === value) {
+        data.votes.splice(idx, 1);
+      } else if (idx >= 0) {
+        data.votes[idx] = {
+          ...data.votes[idx],
+          value,
+          updatedAt: new Date().toISOString(),
+        };
+      } else {
+        data.votes.push({
+          barId,
+          authorId,
+          voterId,
+          value,
+          updatedAt: new Date().toISOString(),
         });
       }
       mem = data;
@@ -274,6 +339,16 @@ function createTursoBackend(url, authToken) {
       const message = String(err && err.message ? err.message : err);
       if (!/duplicate column|already exists/i.test(message)) throw err;
     }
+    await client.execute(`
+      CREATE TABLE IF NOT EXISTS comment_votes (
+        bar_id TEXT NOT NULL,
+        author_id TEXT NOT NULL,
+        voter_id TEXT NOT NULL,
+        value INTEGER NOT NULL CHECK (value IN (-1, 1)),
+        updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+        PRIMARY KEY (bar_id, author_id, voter_id)
+      )
+    `);
     ready = true;
   }
 
@@ -284,6 +359,43 @@ function createTursoBackend(url, authToken) {
         "SELECT bar_id, visitor_id, score, comment, created_at, updated_at FROM ratings"
       );
       return mapTursoRows(result);
+    },
+    async allVotes() {
+      await ensureSchema();
+      const result = await client.execute(
+        "SELECT bar_id, author_id, voter_id, value FROM comment_votes"
+      );
+      return (result.rows || []).map((row) => ({
+        barId: row.bar_id,
+        authorId: row.author_id,
+        voterId: row.voter_id,
+        value: Number(row.value),
+      }));
+    },
+    async upsertVote({ barId, authorId, voterId, value }) {
+      await ensureSchema();
+      const existing = await client.execute({
+        sql: `SELECT value FROM comment_votes WHERE bar_id = ? AND author_id = ? AND voter_id = ?`,
+        args: [barId, authorId, voterId],
+      });
+      const current = existing.rows?.[0] ? Number(existing.rows[0].value) : null;
+      if (current === value) {
+        await client.execute({
+          sql: `DELETE FROM comment_votes WHERE bar_id = ? AND author_id = ? AND voter_id = ?`,
+          args: [barId, authorId, voterId],
+        });
+        return;
+      }
+      await client.execute({
+        sql: `
+          INSERT INTO comment_votes (bar_id, author_id, voter_id, value, updated_at)
+          VALUES (?, ?, ?, ?, datetime('now'))
+          ON CONFLICT(bar_id, author_id, voter_id) DO UPDATE SET
+            value = excluded.value,
+            updated_at = excluded.updated_at
+        `,
+        args: [barId, authorId, voterId, value],
+      });
     },
     async upsert({ barId, visitorId, score, comment, createdAt }) {
       await ensureSchema();
@@ -328,12 +440,62 @@ async function getBackend() {
   return backendPromise;
 }
 
-async function getAggregates() {
+async function getAggregates(viewerId = null) {
   const { backend } = await getBackend();
-  const rows = await backend.allRows();
+  const [rows, votes] = await Promise.all([backend.allRows(), backend.allVotes()]);
   return {
-    ratings: aggregate(rows),
+    ratings: aggregate(rows, votes, viewerId),
     persistence: persistenceMode(),
+  };
+}
+
+async function upsertCommentVote({ barId, commentId, visitorId, vote }) {
+  if (typeof barId !== "string" || !ALLOWED_ID.test(barId)) {
+    throw httpError(400, "Ugyldig bar.");
+  }
+  if (typeof commentId !== "string" || !ALLOWED_COMMENT_ID.test(commentId)) {
+    throw httpError(400, "Ugyldig kommentar.");
+  }
+  if (typeof visitorId !== "string" || !ALLOWED_VISITOR.test(visitorId)) {
+    throw httpError(400, "Mangler gyldig besøks-id.");
+  }
+  const value = Number(vote);
+  if (value !== 1 && value !== -1) {
+    throw httpError(400, "Stem 1 for like eller -1 for dislike.");
+  }
+
+  const { backend, catalog } = await getBackend();
+  if (!catalog.ids.has(barId)) {
+    throw httpError(404, "Baren finnes ikke i katalogen.");
+  }
+
+  const rows = await backend.allRows();
+  const author = rows.find(
+    (row) =>
+      row.barId === barId &&
+      publicCommentId(row.barId, row.visitorId) === commentId &&
+      String(row.comment || "").trim()
+  );
+  if (!author) {
+    throw httpError(404, "Kommentaren finnes ikke.");
+  }
+  if (author.visitorId === visitorId) {
+    throw httpError(400, "Du kan ikke stemme på din egen kommentar.");
+  }
+
+  await backend.upsertVote({
+    barId,
+    authorId: author.visitorId,
+    voterId: visitorId,
+    value,
+  });
+
+  const all = await getAggregates(visitorId);
+  return {
+    barId,
+    stats: all.ratings[barId] || emptyStats(),
+    ratings: all.ratings,
+    persistence: all.persistence,
   };
 }
 
@@ -362,7 +524,7 @@ async function upsertRating({ barId, score, visitorId, comment }) {
     createdAt: new Date().toISOString(),
   });
 
-  const all = await getAggregates();
+  const all = await getAggregates(visitorId);
   return {
     barId,
     stats: all.ratings[barId] || emptyStats(),
@@ -379,6 +541,7 @@ function resetForTests() {
 module.exports = {
   getAggregates,
   upsertRating,
+  upsertCommentVote,
   resetForTests,
   persistenceMode,
   SEED_VISITOR,
