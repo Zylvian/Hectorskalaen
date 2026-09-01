@@ -890,8 +890,10 @@
     }
   }
 
+  const MOBILE_FILTERS_MQ = "(max-width: 760px) and (pointer: coarse)";
+
   function isMobileFilters() {
-    return window.matchMedia("(max-width: 760px)").matches;
+    return window.matchMedia(MOBILE_FILTERS_MQ).matches;
   }
 
   function setFiltersOpen(open) {
@@ -1045,7 +1047,7 @@
     });
     filtersClose?.addEventListener("click", () => setFiltersOpen(false));
     filtersScrim?.addEventListener("click", () => setFiltersOpen(false));
-    window.matchMedia("(max-width: 760px)").addEventListener("change", () => {
+    window.matchMedia(MOBILE_FILTERS_MQ).addEventListener("change", () => {
       setFiltersOpen(false);
     });
     setFiltersOpen(false);

@@ -1240,6 +1240,26 @@ body {
 }
 
 @media (max-width: 760px) {
+  .dialog-body {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 16px 20px;
+  }
+
+  .bar-card--list .bar-card-button {
+    flex-direction: column;
+  }
+
+  .bar-card--list .bar-media {
+    width: 100%;
+  }
+
+  .rate-buttons {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 760px) and (pointer: coarse) {
   .app-root {
     padding: 8px 10px 12px;
     gap: 8px;
@@ -1471,27 +1491,55 @@ body {
     min-height: 0;
     height: auto;
   }
+}
 
-  .dialog-body {
-    display: flex;
-    flex-direction: column;
-    padding: 8px 16px 20px;
+@media (min-width: 761px), (pointer: fine) {
+  .filters-toggle,
+  .filters-drawer-head,
+  .filters-scrim {
+    display: none;
   }
 
-  .bar-card--list .bar-card-button {
-    flex-direction: column;
+  .toolbar {
+    position: relative;
+    inset: auto;
+    width: auto;
+    height: auto;
+    transform: none;
+    visibility: visible;
+    pointer-events: auto;
+    overflow: visible;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px 16px;
+    padding: 16px 18px;
+    border-radius: var(--radius-xl);
+    z-index: auto;
   }
 
-  .bar-card--list .bar-media {
-    width: 100%;
+  body.filters-open .toolbar {
+    transform: none;
+    visibility: visible;
+    pointer-events: auto;
   }
 
-  .rate-buttons {
-    grid-template-columns: repeat(5, 1fr);
+  .toolbar-filters {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    width: auto;
+  }
+
+  .toolbar-filters select,
+  .rank-tabs,
+  .view-toggle-group {
+    width: auto;
   }
 }
 
-@media (max-width: 760px) and (prefers-reduced-motion: reduce) {
+@media (max-width: 760px) and (pointer: coarse) and (prefers-reduced-motion: reduce) {
   .filters-scrim,
   .filters-toggle,
   .toolbar {
