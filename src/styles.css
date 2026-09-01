@@ -1296,12 +1296,12 @@ body {
     top: 46%;
     right: 0;
     z-index: 3900;
-    width: 22px;
-    height: 52px;
+    width: 44px;
+    height: 80px;
     padding: 0;
     border: 1px solid var(--border-subtle);
     border-right: 0;
-    border-radius: 10px 0 0 10px;
+    border-radius: 14px 0 0 14px;
     background: rgba(18, 20, 28, 0.94);
     color: var(--accent);
     box-shadow: -6px 0 18px rgba(0, 0, 0, 0.35);
@@ -1312,7 +1312,7 @@ body {
 
   .filters-toggle-chevron::before {
     content: "‹";
-    font-size: 1.55rem;
+    font-size: 2.25rem;
     line-height: 1;
     font-weight: 600;
   }
