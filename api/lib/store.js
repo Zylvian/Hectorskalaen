@@ -96,15 +96,23 @@ function publicCommentId(barId, visitorId) {
   return createHash("sha256").update(`${barId}:${visitorId}`).digest("hex").slice(0, 16);
 }
 
+function voteValue(value) {
+  const n = Number(value);
+  if (n === 1 || n === -1) return n;
+  return 0;
+}
+
 function tallyVotes(votes, barId, authorId, viewerId) {
   let upvotes = 0;
   let downvotes = 0;
   let myVote = 0;
   for (const vote of votes) {
     if (vote.barId !== barId || vote.authorId !== authorId) continue;
-    if (vote.value === 1) upvotes += 1;
-    else if (vote.value === -1) downvotes += 1;
-    if (viewerId && vote.voterId === viewerId) myVote = vote.value;
+    const value = voteValue(vote.value);
+    if (!value) continue;
+    if (value === 1) upvotes += 1;
+    else downvotes += 1;
+    if (viewerId && vote.voterId === viewerId) myVote = value;
   }
   return { upvotes, downvotes, myVote };
 }
@@ -184,6 +192,16 @@ function httpError(status, message) {
 
 function createJsonBackend(filePath) {
   let mem = { ratings: [], votes: [] };
+  let queue = Promise.resolve();
+
+  function locked(fn) {
+    const run = queue.then(fn, fn);
+    queue = run.then(
+      () => undefined,
+      () => undefined
+    );
+    return run;
+  }
 
   async function read() {
     try {
@@ -206,17 +224,20 @@ function createJsonBackend(filePath) {
 
   return {
     async allRows() {
-      const data = await read();
-      return data.ratings.map((r) => ({
-        barId: r.barId,
-        visitorId: r.visitorId,
-        score: r.score,
-        comment: typeof r.comment === "string" ? r.comment : "",
-        updatedAt: r.updatedAt || r.createdAt || null,
-      }));
+      return locked(async () => {
+        const data = await read();
+        return data.ratings.map((r) => ({
+          barId: r.barId,
+          visitorId: r.visitorId,
+          score: r.score,
+          comment: typeof r.comment === "string" ? r.comment : "",
+          updatedAt: r.updatedAt || r.createdAt || null,
+        }));
+      });
     },
     async upsert({ barId, visitorId, score, comment, createdAt }) {
-      const data = await read();
+      return locked(async () => {
+        const data = await read();
       const idx = data.ratings.findIndex(
         (r) => r.barId === barId && r.visitorId === visitorId
       );
@@ -239,65 +260,72 @@ function createJsonBackend(filePath) {
       }
       mem = data;
       await write();
+      });
     },
     async allVotes() {
-      const data = await read();
-      return (data.votes || []).map((v) => ({
-        barId: v.barId,
-        authorId: v.authorId,
-        voterId: v.voterId,
-        value: Number(v.value),
-      }));
+      return locked(async () => {
+        const data = await read();
+        return (data.votes || []).map((v) => ({
+          barId: v.barId,
+          authorId: v.authorId,
+          voterId: v.voterId,
+          value: voteValue(v.value),
+        }));
+      });
     },
     async upsertVote({ barId, authorId, voterId, value }) {
-      const data = await read();
-      if (!Array.isArray(data.votes)) data.votes = [];
-      const idx = data.votes.findIndex(
-        (v) => v.barId === barId && v.authorId === authorId && v.voterId === voterId
-      );
-      if (idx >= 0 && data.votes[idx].value === value) {
-        data.votes.splice(idx, 1);
-      } else if (idx >= 0) {
-        data.votes[idx] = {
-          ...data.votes[idx],
-          value,
-          updatedAt: new Date().toISOString(),
-        };
-      } else {
-        data.votes.push({
-          barId,
-          authorId,
-          voterId,
-          value,
-          updatedAt: new Date().toISOString(),
-        });
-      }
-      mem = data;
-      await write();
-    },
-    async seedIfEmpty(seeds) {
-      const data = await read();
-      const haveSeed = new Set(
-        data.ratings
-          .filter((r) => r.visitorId === SEED_VISITOR)
-          .map((r) => r.barId)
-      );
-      let changed = false;
-      for (const seed of seeds) {
-        if (haveSeed.has(seed.id)) continue;
-        data.ratings.push({
-          barId: seed.id,
-          visitorId: SEED_VISITOR,
-          score: seed.score,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-        changed = true;
-      }
-      if (changed) {
+      return locked(async () => {
+        const data = await read();
+        if (!Array.isArray(data.votes)) data.votes = [];
+        const idx = data.votes.findIndex(
+          (v) => v.barId === barId && v.authorId === authorId && v.voterId === voterId
+        );
+        if (idx >= 0 && voteValue(data.votes[idx].value) === value) {
+          data.votes.splice(idx, 1);
+        } else if (idx >= 0) {
+          data.votes[idx] = {
+            ...data.votes[idx],
+            value,
+            updatedAt: new Date().toISOString(),
+          };
+        } else {
+          data.votes.push({
+            barId,
+            authorId,
+            voterId,
+            value,
+            updatedAt: new Date().toISOString(),
+          });
+        }
         mem = data;
         await write();
-      }
+      });
+    },
+    async seedIfEmpty(seeds) {
+      return locked(async () => {
+        const data = await read();
+        const haveSeed = new Set(
+          data.ratings
+            .filter((r) => r.visitorId === SEED_VISITOR)
+            .map((r) => r.barId)
+        );
+        let changed = false;
+        for (const seed of seeds) {
+          if (haveSeed.has(seed.id)) continue;
+          data.ratings.push({
+            barId: seed.id,
+            visitorId: SEED_VISITOR,
+            score: seed.score,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+          changed = true;
+        }
+        if (changed) {
+          mem = data;
+          await write();
+        }
+      });
     },
   };
 }
@@ -369,7 +397,7 @@ function createTursoBackend(url, authToken) {
         barId: row.bar_id,
         authorId: row.author_id,
         voterId: row.voter_id,
-        value: Number(row.value),
+        value: voteValue(row.value),
       }));
     },
     async upsertVote({ barId, authorId, voterId, value }) {
@@ -378,7 +406,7 @@ function createTursoBackend(url, authToken) {
         sql: `SELECT value FROM comment_votes WHERE bar_id = ? AND author_id = ? AND voter_id = ?`,
         args: [barId, authorId, voterId],
       });
-      const current = existing.rows?.[0] ? Number(existing.rows[0].value) : null;
+      const current = existing.rows?.[0] ? voteValue(existing.rows[0].value) : 0;
       if (current === value) {
         await client.execute({
           sql: `DELETE FROM comment_votes WHERE bar_id = ? AND author_id = ? AND voter_id = ?`,

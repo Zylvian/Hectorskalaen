@@ -31,6 +31,8 @@
   let viewMode = "grid";
   let amenityFilter = "all";
   let rankingFilter = "rated";
+  let commentSort = "upvotes";
+  let commentVoteBusy = false;
   let userLocation = null;
   let map = null;
   let mapMarkers = [];
@@ -227,6 +229,14 @@
       }
       if (sortMode === "votes") {
         return displayScore(b).count - displayScore(a).count || a.title.localeCompare(b.title, "nb");
+      }
+      if (sortMode === "likes") {
+        const likes = (bar) =>
+          (displayScore(bar).comments || []).reduce(
+            (sum, item) => sum + (Number(item.upvotes) || 0),
+            0
+          );
+        return likes(b) - likes(a) || a.title.localeCompare(b.title, "nb");
       }
       if (sortMode === "near" && userLocation) {
         return (
@@ -504,26 +514,47 @@
       .join("")}</ol>`;
   }
 
+  function voteCount(value) {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function sortComments(list) {
+    const items = Array.isArray(list) ? list.slice() : [];
+    items.sort((a, b) => {
+      if (commentSort === "newest") {
+        return String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
+      }
+      return (
+        voteCount(b.upvotes) - voteCount(a.upvotes) ||
+        voteCount(a.downvotes) - voteCount(b.downvotes) ||
+        String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""))
+      );
+    });
+    return items;
+  }
+
   function commentsHtml(comments) {
-    const list = Array.isArray(comments) ? comments : [];
+    const list = sortComments(comments);
     if (!list.length) {
       return `<p class="dialog-empty">Ingen kommentarer ennå. Du kan legge igjen en sammen med stemmen.</p>`;
     }
     return `<ul class="comment-list">${list
       .map((item) => {
-        const upActive = item.myVote === 1 ? " is-active" : "";
-        const downActive = item.myVote === -1 ? " is-active" : "";
-        const voteControls = item.own
-          ? `<p class="comment-own">Din kommentar</p>`
-          : `<div class="comment-votes">
-              <button type="button" class="comment-vote comment-vote--up${upActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="1" aria-label="Like">↑ ${item.upvotes || 0}</button>
-              <button type="button" class="comment-vote comment-vote--down${downActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="-1" aria-label="Dislike">↓ ${item.downvotes || 0}</button>
-            </div>`;
+        const up = voteCount(item.upvotes);
+        const down = voteCount(item.downvotes);
+        const upActive = voteCount(item.myVote) === 1 ? " is-active" : "";
+        const downActive = voteCount(item.myVote) === -1 ? " is-active" : "";
+        const own = Boolean(item.own);
         return `<li>
           <span class="comment-score" style="color:${ratingColor(item.score)}">${item.score}/10</span>
           <div class="comment-body">
             <p>${escapeHtml(item.comment)}</p>
-            ${voteControls}
+            <div class="comment-votes">
+              <button type="button" class="comment-vote comment-vote--up${upActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="1" aria-pressed="${upActive ? "true" : "false"}" aria-label="Like, ${up}" ${own ? "disabled title=\"Du kan ikke like din egen kommentar\"" : ""}>↑ <span class="comment-vote-count">${up}</span></button>
+              <button type="button" class="comment-vote comment-vote--down${downActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="-1" aria-pressed="${downActive ? "true" : "false"}" aria-label="Dislike, ${down}" ${own ? "disabled title=\"Du kan ikke dislike din egen kommentar\"" : ""}>↓ <span class="comment-vote-count">${down}</span></button>
+              ${own ? `<p class="comment-own">Din kommentar</p>` : ""}
+            </div>
           </div>
         </li>`;
       })
@@ -573,7 +604,10 @@
         <p class="rate-status" id="rateStatus"></p>
         <section class="comment-section" aria-label="Kommentarer">
           <h3>Kommentarer</h3>
-          <p class="comment-sort-note">Sortert etter flest likes</p>
+          <div class="comment-sort" role="group" aria-label="Sorter kommentarer">
+            <button type="button" class="comment-sort-btn${commentSort === "upvotes" ? " is-active" : ""}" data-comment-sort="upvotes">Flest likes</button>
+            <button type="button" class="comment-sort-btn${commentSort === "newest" ? " is-active" : ""}" data-comment-sort="newest">Nyeste</button>
+          </div>
           ${commentsHtml(stats.comments)}
         </section>
       </div>
@@ -620,6 +654,12 @@
       });
     }
     bindCommentVotes(bar);
+    dialogBody?.querySelectorAll("[data-comment-sort]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        commentSort = btn.getAttribute("data-comment-sort") === "newest" ? "newest" : "upvotes";
+        openBar(bar.id, { reopen: false });
+      });
+    });
     if (reopen && typeof barDialog.showModal === "function" && !barDialog.open) {
       barDialog.showModal();
     } else if (reopen && !barDialog.open) {
@@ -635,8 +675,32 @@
     });
   }
 
+  function applyCommentVoteLocally(barId, commentId, vote) {
+    const stats = ratings[barId];
+    if (!stats || !Array.isArray(stats.comments)) return false;
+    const item = stats.comments.find((row) => row.id === commentId);
+    if (!item || item.own) return false;
+    const prev = voteCount(item.myVote);
+    const next = prev === vote ? 0 : vote;
+    item.upvotes = Math.max(0, voteCount(item.upvotes) - (prev === 1 ? 1 : 0) + (next === 1 ? 1 : 0));
+    item.downvotes = Math.max(
+      0,
+      voteCount(item.downvotes) - (prev === -1 ? 1 : 0) + (next === -1 ? 1 : 0)
+    );
+    item.myVote = next;
+    stats.comments = sortComments(stats.comments);
+    return true;
+  }
+
   async function voteOnComment(bar, commentId, vote) {
-    const status = document.getElementById("rateStatus");
+    if (commentVoteBusy || !commentId) return;
+    commentVoteBusy = true;
+    const previous = ratings[bar.id] ? JSON.parse(JSON.stringify(ratings[bar.id])) : null;
+    applyCommentVoteLocally(bar.id, commentId, vote);
+    openBar(bar.id, { reopen: false });
+    dialogBody?.querySelectorAll(".comment-vote").forEach((btn) => {
+      btn.disabled = true;
+    });
     try {
       const response = await fetch("/api/ratings", {
         method: "POST",
@@ -656,7 +720,12 @@
       openBar(bar.id, { reopen: false });
       render();
     } catch (err) {
-      if (status) status.textContent = err.message || "Noe gikk galt.";
+      if (previous) ratings[bar.id] = previous;
+      openBar(bar.id, { reopen: false });
+      const nextStatus = document.getElementById("rateStatus");
+      if (nextStatus) nextStatus.textContent = err.message || "Noe gikk galt.";
+    } finally {
+      commentVoteBusy = false;
     }
   }
 
