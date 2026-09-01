@@ -1293,7 +1293,7 @@ body {
     align-items: center;
     justify-content: center;
     position: fixed;
-    top: 7.5rem;
+    top: 50%;
     right: 0;
     z-index: 3900;
     width: 44px;
@@ -1306,6 +1306,7 @@ body {
     color: var(--accent);
     box-shadow: -6px 0 18px rgba(0, 0, 0, 0.35);
     cursor: pointer;
+    transform: translateY(-50%);
     transition: right 0.22s ease, background var(--transition-fast), color var(--transition-fast);
   }
 
@@ -1365,15 +1366,15 @@ body {
 
   .toolbar {
     position: fixed;
-    top: 0;
+    top: 50%;
     right: 0;
     bottom: auto;
     --filters-drawer-width: min(14rem, 66vw);
     width: var(--filters-drawer-width);
     height: auto;
-    max-height: 100dvh;
+    max-height: calc(100dvh - 24px);
     margin: 0;
-    border-radius: 0 0 0 20px;
+    border-radius: 16px 0 0 16px;
     z-index: 4500;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -1382,14 +1383,14 @@ body {
     gap: 22px;
     padding: 18px 14px 22px;
     overflow-y: auto;
-    transform: translateX(100%);
+    transform: translate(100%, -50%);
     visibility: hidden;
     pointer-events: none;
     transition: transform 0.22s ease, visibility 0.22s ease;
   }
 
   body.filters-open .toolbar {
-    transform: translateX(0);
+    transform: translate(0, -50%);
     visibility: visible;
     pointer-events: auto;
   }
