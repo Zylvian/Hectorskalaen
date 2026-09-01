@@ -769,22 +769,26 @@ body {
   transform: translate(-50%, -50%);
   margin: 0;
   z-index: 4600;
-  width: min(22rem, calc(100vw - 28px));
+  width: min(22rem, calc(100vw - 32px));
   max-height: calc(100dvh - 32px);
   overflow: auto;
   border: 1px solid var(--border-subtle);
   border-radius: 24px;
   background: #101218;
   color: var(--text);
-  padding: 0 0 8px;
+  padding: 0;
   box-shadow: var(--shadow-soft);
   color-scheme: dark;
 }
 
+.about-dialog .dialog-chrome {
+  padding: 18px 16px 2px;
+}
+
 .about-dialog-body {
-  padding: 4px 20px 20px;
+  padding: 8px 22px 28px;
   display: grid;
-  gap: 14px;
+  gap: 20px;
 }
 
 .about-dialog-body h2 {
@@ -798,7 +802,19 @@ body {
 .about-dialog-body p {
   margin: 0;
   color: var(--text-muted);
-  line-height: 1.45;
+  line-height: 1.65;
+}
+
+.about-dialog .scale-track {
+  height: 16px;
+  padding: 0 2px 26px;
+  margin-top: 4px;
+}
+
+.about-dialog .scale-keys {
+  display: grid;
+  gap: 10px;
+  padding-top: 4px;
 }
 
 .dialog-scrim {
@@ -1294,6 +1310,15 @@ body {
 
   .dialog-chrome {
     padding: 16px 14px 6px;
+  }
+
+  .about-dialog .dialog-chrome {
+    padding: 20px 18px 6px;
+  }
+
+  .about-dialog-body {
+    padding: 6px 22px 28px;
+    gap: 22px;
   }
 
   .dialog-body {
