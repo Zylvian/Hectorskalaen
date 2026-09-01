@@ -42,7 +42,122 @@ async function main() {
   assert(changed.stats.count === 2, "updating a vote should not add another");
   assert(changed.stats.average === 7, `expected 7, got ${changed.stats.average}`);
 
+  const withComment = await store.upsertRating({
+    barId: "osm-n2839876148",
+    score: 6,
+    visitorId,
+    comment: "  Lukter kjeller, men greit øl.  ",
+  });
+  assert(withComment.stats.count === 2, "comment should not add another vote");
+  assert(withComment.stats.average === 8, `expected 8, got ${withComment.stats.average}`);
+  assert(withComment.stats.comments.length === 1, "one public comment");
+  assert(
+    withComment.stats.comments[0].comment === "Lukter kjeller, men greit øl.",
+    "comment should be trimmed"
+  );
+  assert(withComment.stats.comments[0].score === 6, "comment should keep the score");
+
+  const updatedComment = await store.upsertRating({
+    barId: "osm-n2839876148",
+    score: 5,
+    visitorId,
+    comment: "Oppdatert: merkbart, ikke verst.",
+  });
+  assert(updatedComment.stats.count === 2, "updating comment should still be one vote");
+  assert(updatedComment.stats.comments.length === 1, "still one comment after update");
+  assert(
+    updatedComment.stats.comments[0].comment === "Oppdatert: merkbart, ikke verst.",
+    "comment should be replaced, not stacked"
+  );
+
+  const otherVisitor = "22222222-2222-4222-8222-222222222222";
+  const liked = await store.upsertCommentVote({
+    barId: "osm-n2839876148",
+    commentId: updatedComment.stats.comments[0].id,
+    visitorId: otherVisitor,
+    vote: 1,
+  });
+  assert(liked.stats.comments[0].upvotes === 1, "comment should have one like");
+  assert(liked.stats.comments[0].downvotes === 0, "no dislikes yet");
+  assert(liked.stats.comments[0].myVote === 1, "viewer like should be marked");
+
+  const disliked = await store.upsertCommentVote({
+    barId: "osm-n2839876148",
+    commentId: updatedComment.stats.comments[0].id,
+    visitorId: otherVisitor,
+    vote: -1,
+  });
+  assert(disliked.stats.comments[0].upvotes === 0, "switching to dislike clears the like");
+  assert(disliked.stats.comments[0].downvotes === 1, "dislike should count");
+
+  const toggledOff = await store.upsertCommentVote({
+    barId: "osm-n2839876148",
+    commentId: updatedComment.stats.comments[0].id,
+    visitorId: otherVisitor,
+    vote: -1,
+  });
+  assert(toggledOff.stats.comments[0].downvotes === 0, "clicking dislike again should undo");
+
   let failed = false;
+  try {
+    await store.upsertCommentVote({
+      barId: "osm-n2839876148",
+      commentId: updatedComment.stats.comments[0].id,
+      visitorId,
+      vote: 1,
+    });
+  } catch (err) {
+    failed = err.status === 400;
+  }
+  assert(failed, "author should not like their own comment");
+
+  const thirdVisitor = "33333333-3333-4333-8333-333333333333";
+  const secondComment = await store.upsertRating({
+    barId: "osm-n2839876148",
+    score: 9,
+    visitorId: otherVisitor,
+    comment: "Verre enn sist.",
+  });
+  assert(secondComment.stats.comments.length === 2, "two public comments");
+  await store.upsertCommentVote({
+    barId: "osm-n2839876148",
+    commentId: secondComment.stats.comments.find((c) => c.comment === "Verre enn sist.").id,
+    visitorId: thirdVisitor,
+    vote: 1,
+  });
+  const ranked = await store.upsertCommentVote({
+    barId: "osm-n2839876148",
+    commentId: secondComment.stats.comments.find((c) => c.comment === "Oppdatert: merkbart, ikke verst.").id,
+    visitorId: thirdVisitor,
+    vote: 1,
+  });
+  await store.upsertCommentVote({
+    barId: "osm-n2839876148",
+    commentId: ranked.stats.comments.find((c) => c.comment === "Oppdatert: merkbart, ikke verst.").id,
+    visitorId: otherVisitor,
+    vote: 1,
+  });
+  const sorted = await store.getAggregates(thirdVisitor);
+  const hectorComments = sorted.ratings["osm-n2839876148"].comments;
+  assert(hectorComments[0].upvotes >= hectorComments[1].upvotes, "comments should sort by most likes");
+  assert(hectorComments[0].comment === "Oppdatert: merkbart, ikke verst.", "most liked comment first");
+  assert(hectorComments[0].upvotes === 2, "top comment should have two likes");
+  assert(hectorComments[1].upvotes === 1, "second comment should keep one like");
+
+  failed = false;
+  try {
+    await store.upsertRating({
+      barId: "osm-n2839876148",
+      score: 5,
+      visitorId,
+      comment: "x".repeat(300),
+    });
+  } catch (err) {
+    failed = err.status === 400;
+  }
+  assert(failed, "overlong comment should be rejected");
+
+  failed = false;
   try {
     await store.upsertRating({ barId: "osm-n2839876148", score: 11, visitorId });
   } catch (err) {

@@ -56,11 +56,24 @@ async function handleApi(req, res) {
 
   try {
     if (req.method === "GET") {
-      sendJson(res, 200, await store.getAggregates());
+      sendJson(res, 200, await store.getAggregates(url.searchParams.get("visitorId")));
       return;
     }
     if (req.method === "POST") {
       const body = await readBody(req);
+      if (body.commentId != null || body.vote != null) {
+        sendJson(
+          res,
+          200,
+          await store.upsertCommentVote({
+            barId: body.barId,
+            commentId: body.commentId,
+            visitorId: body.visitorId,
+            vote: body.vote,
+          })
+        );
+        return;
+      }
       sendJson(
         res,
         200,
@@ -68,6 +81,7 @@ async function handleApi(req, res) {
           barId: body.barId,
           score: Number(body.score),
           visitorId: body.visitorId,
+          comment: body.comment,
         })
       );
       return;
@@ -95,7 +109,10 @@ function serveStatic(req, res) {
     return;
   }
   const type = TYPES[extname(filePath).toLowerCase()] || "application/octet-stream";
-  res.writeHead(200, { "Content-Type": type });
+  res.writeHead(200, {
+    "Content-Type": type,
+    "Cache-Control": "no-store",
+  });
   createReadStream(filePath).pipe(res);
 }
 

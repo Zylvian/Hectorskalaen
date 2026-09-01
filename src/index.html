@@ -81,6 +81,14 @@
           />
         </div>
         <div class="toolbar-filters">
+          <div class="rank-tabs" role="tablist" aria-label="Vurderte eller ikke">
+            <button id="tabRated" class="btn-ghost btn-toggle btn-toggle--active" type="button" role="tab" aria-selected="true">
+              Med score
+            </button>
+            <button id="tabUnrated" class="btn-ghost btn-toggle" type="button" role="tab" aria-selected="false">
+              Uten score
+            </button>
+          </div>
           <label class="sr-only" for="amenityFilter">Type</label>
           <select id="amenityFilter">
             <option value="all">Alle typer</option>
@@ -93,9 +101,9 @@
             <option value="worst">Lukt: verst først</option>
             <option value="best">Lukt: best først</option>
             <option value="votes">Flest stemmer</option>
+            <option value="likes">Flest likes</option>
             <option value="az">A–Å</option>
             <option value="near">Nærmest meg</option>
-            <option value="unrated">Mangler stemmer</option>
           </select>
           <div class="view-toggle-group" role="group" aria-label="Visning">
             <button id="viewGrid" class="btn-ghost btn-toggle btn-toggle--active" type="button">

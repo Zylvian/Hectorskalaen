@@ -20,15 +20,19 @@
 
   const VISITOR_KEY = "hectorskalaen.visitorId";
   const MY_RATINGS_KEY = "hectorskalaen.myRatings";
+  const COMMENT_MAX = 280;
 
   /** @type {Array<any>} */
   let bars = [];
-  /** @type {Record<string, {average: number|null, count: number, histogram: number[]}>} */
+  /** @type {Record<string, {average: number|null, count: number, histogram: number[], comments?: Array<{score:number, comment:string}>}>} */
   let ratings = {};
   let searchQuery = "";
   let sortMode = "worst";
   let viewMode = "grid";
   let amenityFilter = "all";
+  let rankingFilter = "rated";
+  let commentSort = "upvotes";
+  let commentVoteBusy = false;
   let userLocation = null;
   let map = null;
   let mapMarkers = [];
@@ -42,6 +46,8 @@
   const viewGridBtn = document.getElementById("viewGrid");
   const viewListBtn = document.getElementById("viewList");
   const viewMapBtn = document.getElementById("viewMap");
+  const tabRated = document.getElementById("tabRated");
+  const tabUnrated = document.getElementById("tabUnrated");
   const mapPanel = document.getElementById("mapPanel");
   const listWrapper = document.querySelector(".bars-scroll-wrapper");
   const barDialog = document.getElementById("barDialog");
@@ -82,32 +88,52 @@
     }
   }
 
-  function saveMyRating(barId, score) {
+  function myVote(barId) {
+    const value = loadMyRatings()[barId];
+    if (typeof value === "number") return { score: value, comment: "" };
+    if (value && typeof value.score === "number") {
+      return {
+        score: value.score,
+        comment: typeof value.comment === "string" ? value.comment : "",
+      };
+    }
+    return null;
+  }
+
+  function saveMyRating(barId, score, comment) {
     const all = loadMyRatings();
-    all[barId] = score;
+    all[barId] = { score, comment: comment || "" };
     localStorage.setItem(MY_RATINGS_KEY, JSON.stringify(all));
   }
 
   function ratingColor(rating) {
     const clamped = Math.min(10, Math.max(1, Number(rating) || 1));
-    const hue = 120 - ((clamped - 1) / 9) * 120;
-    return `hsl(${hue.toFixed(0)}, 84%, 55%)`;
+    const t = (clamped - 1) / 9;
+    const hue = 120 - t * 120;
+    const sat = 50 + t * 12;
+    const light = 68 - t * 8;
+    return `hsl(${hue.toFixed(0)} ${sat.toFixed(0)}% ${light.toFixed(0)}%)`;
   }
 
   function displayScore(bar) {
     const live = ratings[bar.id];
     if (live && live.count > 0 && typeof live.average === "number") {
-      return live;
+      return { ...live, comments: live.comments || [] };
     }
     if (typeof bar.seedRating === "number") {
       return {
         average: bar.seedRating,
         count: 0,
         histogram: null,
+        comments: [],
         seeded: true,
       };
     }
-    return { average: null, count: 0, histogram: null };
+    return { average: null, count: 0, histogram: null, comments: [] };
+  }
+
+  function isRated(bar) {
+    return displayScore(bar).average != null;
   }
 
   function roundedAverage(bar) {
@@ -174,6 +200,7 @@
     if (amenityFilter !== "all") {
       next = next.filter((bar) => bar.amenity === amenityFilter);
     }
+    next = next.filter((bar) => (rankingFilter === "rated" ? isRated(bar) : !isRated(bar)));
     if (query) {
       next = next.filter((bar) => {
         const hay = `${bar.title} ${bar.osmName || ""} ${bar.description || ""}`.toLowerCase();
@@ -181,7 +208,7 @@
       });
     }
     if (sortMode === "unrated") {
-      next = next.filter((bar) => displayScore(bar).count === 0 && displayScore(bar).average == null);
+      next = next.filter((bar) => !isRated(bar));
     }
 
     const scoreOr = (bar, fallback) => {
@@ -202,6 +229,14 @@
       }
       if (sortMode === "votes") {
         return displayScore(b).count - displayScore(a).count || a.title.localeCompare(b.title, "nb");
+      }
+      if (sortMode === "likes") {
+        const likes = (bar) =>
+          (displayScore(bar).comments || []).reduce(
+            (sum, item) => sum + (Number(item.upvotes) || 0),
+            0
+          );
+        return likes(b) - likes(a) || a.title.localeCompare(b.title, "nb");
       }
       if (sortMode === "near" && userLocation) {
         return (
@@ -268,7 +303,9 @@
     const scored = stats.average != null;
     overlay.setAttribute("aria-label", scored ? `${formatAverage(stats.average)} av 10` : "Ingen score ennå");
     if (scored) {
-      overlay.style.setProperty("--overlay-glow", ratingColor(stats.average));
+      const color = ratingColor(stats.average);
+      overlay.style.setProperty("--overlay-glow", color);
+      overlay.style.setProperty("--score-color", color);
     } else {
       overlay.classList.add("bar-rating-overlay--empty");
     }
@@ -285,7 +322,7 @@
 
   function createBarElement(bar) {
     const stats = displayScore(bar);
-    const mine = loadMyRatings()[bar.id];
+    const mine = myVote(bar.id);
     const li = document.createElement("li");
     li.className = "bar-card";
     li.classList.add(viewMode === "list" ? "bar-card--list" : "bar-card--grid");
@@ -316,7 +353,9 @@
     if (mine) {
       const yours = document.createElement("p");
       yours.className = "bar-yours";
-      yours.textContent = `Du ga ${mine}/10`;
+      yours.textContent = mine.comment
+        ? `Du ga ${mine.score}/10 — «${mine.comment}»`
+        : `Du ga ${mine.score}/10`;
       info.appendChild(yours);
     }
     button.appendChild(info);
@@ -325,19 +364,44 @@
     return li;
   }
 
+  function updateRankTabs() {
+    const ratedCount = bars.filter(isRated).length;
+    const unratedCount = bars.length - ratedCount;
+    if (tabRated) {
+      tabRated.textContent = `Med score (${ratedCount})`;
+      tabRated.classList.toggle("btn-toggle--active", rankingFilter === "rated");
+      tabRated.setAttribute("aria-selected", rankingFilter === "rated" ? "true" : "false");
+    }
+    if (tabUnrated) {
+      tabUnrated.textContent = `Uten score (${unratedCount})`;
+      tabUnrated.classList.toggle("btn-toggle--active", rankingFilter === "unrated");
+      tabUnrated.setAttribute("aria-selected", rankingFilter === "unrated" ? "true" : "false");
+    }
+    return { ratedCount, unratedCount };
+  }
+
   function renderList() {
     if (!barsList || !resultsSummary) return;
     barsList.classList.toggle("bars-list--grid", viewMode === "grid");
     const filtered = filteredBars();
+    const { ratedCount, unratedCount } = updateRankTabs();
     const query = searchQuery.trim();
     if (!filtered.length) {
       resultsSummary.textContent = query
         ? `Ingen barer matcher «${query}».`
-        : "Ingen barer i dette utvalget.";
+        : rankingFilter === "rated"
+          ? "Ingen barer med score ennå."
+          : "Alle barer har fått score.";
     } else if (query) {
-      resultsSummary.textContent = `${filtered.length} av ${bars.length} barer matcher «${query}».`;
+      const pool = rankingFilter === "rated" ? "vurderte" : "uavklarte";
+      resultsSummary.textContent = `${filtered.length} av ${
+        rankingFilter === "rated" ? ratedCount : unratedCount
+      } ${pool} barer matcher «${query}».`;
     } else {
-      resultsSummary.textContent = `${filtered.length} utesteder i Bergen på Hectorskalaen.`;
+      resultsSummary.textContent =
+        rankingFilter === "rated"
+          ? `${filtered.length} utesteder med score på Hectorskalaen.`
+          : `${filtered.length} utesteder uten score ennå.`;
     }
 
     barsList.innerHTML = "";
@@ -379,16 +443,31 @@
         if (!Number.isFinite(bar.lat) || !Number.isFinite(bar.lon)) return;
         const stats = displayScore(bar);
         const color = stats.average == null ? "#e7c14f" : ratingColor(stats.average);
+        const picture = bar.picture
+          ? `<img class="map-hover-image" src="${escapeHtml(bar.picture)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
+          : "";
         const marker = L.circleMarker([bar.lat, bar.lon], {
-          radius: 9,
+          radius: 10,
           color: "#07080d",
           weight: 1,
           fillColor: color,
           fillOpacity: 0.95,
         }).addTo(map);
-        marker.bindTooltip(`${bar.title} · ${formatAverage(stats.average)}/10`, {
-          direction: "top",
-        });
+        marker.bindTooltip(
+          `<div class="map-hover-card">
+            ${picture}
+            <div class="map-hover-copy">
+              <strong>${escapeHtml(bar.title)}</strong>
+              <span class="map-hover-score" style="color:${color}">${formatAverage(stats.average)}/10</span>
+            </div>
+          </div>`,
+          {
+            direction: "top",
+            opacity: 1,
+            sticky: true,
+            className: "map-hover-tooltip",
+          }
+        );
         marker.on("click", () => openBar(bar.id));
         mapMarkers.push(marker);
         bounds.push([bar.lat, bar.lon]);
@@ -397,7 +476,10 @@
         map.fitBounds(bounds, { padding: [36, 36], maxZoom: 15 });
       }
       if (resultsSummary) {
-        resultsSummary.textContent = `${filtered.length} barer på kartet over Bergen.`;
+        resultsSummary.textContent =
+          rankingFilter === "rated"
+            ? `${filtered.length} vurderte barer på kartet.`
+            : `${filtered.length} barer uten score på kartet.`;
       }
     };
 
@@ -406,6 +488,7 @@
 
   function render() {
     updateStats();
+    updateRankTabs();
     if (viewMode === "map") {
       renderMap();
       return;
@@ -431,11 +514,58 @@
       .join("")}</ol>`;
   }
 
+  function voteCount(value) {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function sortComments(list) {
+    const items = Array.isArray(list) ? list.slice() : [];
+    items.sort((a, b) => {
+      if (commentSort === "newest") {
+        return String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
+      }
+      return (
+        voteCount(b.upvotes) - voteCount(a.upvotes) ||
+        voteCount(a.downvotes) - voteCount(b.downvotes) ||
+        String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""))
+      );
+    });
+    return items;
+  }
+
+  function commentsHtml(comments) {
+    const list = sortComments(comments);
+    if (!list.length) {
+      return `<p class="dialog-empty">Ingen kommentarer ennå. Du kan legge igjen en sammen med stemmen.</p>`;
+    }
+    return `<ul class="comment-list">${list
+      .map((item) => {
+        const up = voteCount(item.upvotes);
+        const down = voteCount(item.downvotes);
+        const upActive = voteCount(item.myVote) === 1 ? " is-active" : "";
+        const downActive = voteCount(item.myVote) === -1 ? " is-active" : "";
+        const own = Boolean(item.own);
+        return `<li>
+          <span class="comment-score" style="color:${ratingColor(item.score)}">${item.score}/10</span>
+          <div class="comment-body">
+            <p>${escapeHtml(item.comment)}</p>
+            <div class="comment-votes">
+              <button type="button" class="comment-vote comment-vote--up${upActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="1" aria-pressed="${upActive ? "true" : "false"}" aria-label="Like, ${up}" ${own ? "disabled title=\"Du kan ikke like din egen kommentar\"" : ""}>↑ <span class="comment-vote-count">${up}</span></button>
+              <button type="button" class="comment-vote comment-vote--down${downActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="-1" aria-pressed="${downActive ? "true" : "false"}" aria-label="Dislike, ${down}" ${own ? "disabled title=\"Du kan ikke dislike din egen kommentar\"" : ""}>↓ <span class="comment-vote-count">${down}</span></button>
+              ${own ? `<p class="comment-own">Din kommentar</p>` : ""}
+            </div>
+          </div>
+        </li>`;
+      })
+      .join("")}</ul>`;
+  }
+
   function openBar(barId, { reopen = true } = {}) {
     const bar = bars.find((item) => item.id === barId);
     if (!bar || !barDialog || !dialogBody) return;
     const stats = displayScore(bar);
-    const mine = loadMyRatings()[bar.id];
+    const mine = myVote(bar.id);
     const website = bar.website ? safeUrl(bar.website) : null;
     const osmHref =
       bar.osmType && bar.osmId
@@ -443,13 +573,15 @@
         : null;
     const osmNote =
       bar.osmName && bar.osmName !== bar.title ? ` · OSM: ${escapeHtml(bar.osmName)}` : "";
+    const scoreColor =
+      stats.average == null ? "inherit" : ratingColor(stats.average);
     dialogBody.innerHTML = `
       <div class="dialog-media"></div>
       <div class="dialog-copy">
         <p class="eyebrow">${escapeHtml(amenityLabel(bar.amenity))}${osmNote}</p>
         <h2>${escapeHtml(bar.title)}</h2>
         <p class="dialog-score">
-          <span class="dialog-score-value">${formatAverage(stats.average)}</span>
+          <span class="dialog-score-value" style="color:${scoreColor}">${formatAverage(stats.average)}</span>
           /10
           <small>${stats.count} ${stats.count === 1 ? "stemme" : "stemmer"}</small>
         </p>
@@ -460,10 +592,24 @@
         </p>
         ${histogramHtml(stats.histogram, stats.count)}
         <fieldset class="rate-scale">
-          <legend>${mine ? `Du ga ${mine}/10 — endre stemmen` : "Gi en score (1 = friskt, 10 = piss)"}</legend>
+          <legend>${mine ? `Du ga ${mine.score}/10 — endre stemmen eller kommentaren` : "Gi en score (1 = friskt, 10 = piss)"}</legend>
           <div class="rate-buttons"></div>
+          <label class="comment-field">
+            <span>Valgfri kommentar</span>
+            <textarea id="rateComment" maxlength="${COMMENT_MAX}" rows="3" placeholder="F.eks. Kjellerlukt ved doene.">${escapeHtml(mine?.comment || "")}</textarea>
+            <small id="commentCount">0/${COMMENT_MAX}</small>
+          </label>
+          <button type="button" class="btn-ghost" id="saveRating">${mine ? "Oppdater stemme" : "Lagre stemme"}</button>
         </fieldset>
         <p class="rate-status" id="rateStatus"></p>
+        <section class="comment-section" aria-label="Kommentarer">
+          <h3>Kommentarer</h3>
+          <div class="comment-sort" role="group" aria-label="Sorter kommentarer">
+            <button type="button" class="comment-sort-btn${commentSort === "upvotes" ? " is-active" : ""}" data-comment-sort="upvotes">Flest likes</button>
+            <button type="button" class="comment-sort-btn${commentSort === "newest" ? " is-active" : ""}" data-comment-sort="newest">Nyeste</button>
+          </div>
+          ${commentsHtml(stats.comments)}
+        </section>
       </div>
     `;
     const media = dialogBody.querySelector(".dialog-media");
@@ -474,11 +620,45 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "rate-btn";
-      if (mine === score) btn.classList.add("is-selected");
+      if (mine && mine.score === score) btn.classList.add("is-selected");
       btn.style.setProperty("--score-color", ratingColor(score));
       btn.innerHTML = `<span>${score}</span><small>${label}</small>`;
-      btn.addEventListener("click", () => submitRating(bar, score));
+      btn.addEventListener("click", () => {
+        buttons.querySelectorAll(".rate-btn").forEach((el) => el.classList.toggle("is-selected", el === btn));
+        void submitRating(bar, score);
+      });
       buttons.appendChild(btn);
+    });
+    const commentBox = document.getElementById("rateComment");
+    const commentCount = document.getElementById("commentCount");
+    const syncCount = () => {
+      if (commentCount && commentBox) {
+        commentCount.textContent = `${commentBox.value.length}/${COMMENT_MAX}`;
+      }
+    };
+    syncCount();
+    if (commentBox) commentBox.addEventListener("input", syncCount);
+    const saveBtn = document.getElementById("saveRating");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", () => {
+        const selected = dialogBody.querySelector(".rate-btn.is-selected");
+        const selectedScore = selected
+          ? Number(selected.querySelector("span")?.textContent)
+          : mine?.score;
+        if (!Number.isInteger(selectedScore)) {
+          const status = document.getElementById("rateStatus");
+          if (status) status.textContent = "Velg en score først.";
+          return;
+        }
+        void submitRating(bar, selectedScore);
+      });
+    }
+    bindCommentVotes(bar);
+    dialogBody?.querySelectorAll("[data-comment-sort]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        commentSort = btn.getAttribute("data-comment-sort") === "newest" ? "newest" : "upvotes";
+        openBar(bar.id, { reopen: false });
+      });
     });
     if (reopen && typeof barDialog.showModal === "function" && !barDialog.open) {
       barDialog.showModal();
@@ -487,12 +667,78 @@
     }
   }
 
+  function bindCommentVotes(bar) {
+    dialogBody?.querySelectorAll(".comment-vote").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        void voteOnComment(bar, btn.getAttribute("data-comment-id"), Number(btn.getAttribute("data-vote")));
+      });
+    });
+  }
+
+  function applyCommentVoteLocally(barId, commentId, vote) {
+    const stats = ratings[barId];
+    if (!stats || !Array.isArray(stats.comments)) return false;
+    const item = stats.comments.find((row) => row.id === commentId);
+    if (!item || item.own) return false;
+    const prev = voteCount(item.myVote);
+    const next = prev === vote ? 0 : vote;
+    item.upvotes = Math.max(0, voteCount(item.upvotes) - (prev === 1 ? 1 : 0) + (next === 1 ? 1 : 0));
+    item.downvotes = Math.max(
+      0,
+      voteCount(item.downvotes) - (prev === -1 ? 1 : 0) + (next === -1 ? 1 : 0)
+    );
+    item.myVote = next;
+    stats.comments = sortComments(stats.comments);
+    return true;
+  }
+
+  async function voteOnComment(bar, commentId, vote) {
+    if (commentVoteBusy || !commentId) return;
+    commentVoteBusy = true;
+    const previous = ratings[bar.id] ? JSON.parse(JSON.stringify(ratings[bar.id])) : null;
+    applyCommentVoteLocally(bar.id, commentId, vote);
+    openBar(bar.id, { reopen: false });
+    dialogBody?.querySelectorAll(".comment-vote").forEach((btn) => {
+      btn.disabled = true;
+    });
+    try {
+      const response = await fetch("/api/ratings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          barId: bar.id,
+          commentId,
+          visitorId: visitorId(),
+          vote,
+        }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Kunne ikke lagre stemmen.");
+      ratings = payload.ratings || ratings;
+      if (payload.stats) ratings[bar.id] = payload.stats;
+      persistence = payload.persistence || persistence;
+      openBar(bar.id, { reopen: false });
+      render();
+    } catch (err) {
+      if (previous) ratings[bar.id] = previous;
+      openBar(bar.id, { reopen: false });
+      const nextStatus = document.getElementById("rateStatus");
+      if (nextStatus) nextStatus.textContent = err.message || "Noe gikk galt.";
+    } finally {
+      commentVoteBusy = false;
+    }
+  }
+
   async function submitRating(bar, score) {
     const status = document.getElementById("rateStatus");
+    const commentBox = document.getElementById("rateComment");
+    const comment = commentBox ? commentBox.value : myVote(bar.id)?.comment || "";
     const buttons = dialogBody?.querySelectorAll(".rate-btn") || [];
+    const saveBtn = document.getElementById("saveRating");
     buttons.forEach((btn) => {
       btn.disabled = true;
     });
+    if (saveBtn) saveBtn.disabled = true;
     if (status) status.textContent = "Sender stemme…";
     try {
       const response = await fetch("/api/ratings", {
@@ -502,6 +748,7 @@
           barId: bar.id,
           score,
           visitorId: visitorId(),
+          comment,
         }),
       });
       const payload = await response.json();
@@ -509,17 +756,22 @@
       ratings = payload.ratings || ratings;
       if (payload.stats) ratings[bar.id] = payload.stats;
       persistence = payload.persistence || persistence;
-      saveMyRating(bar.id, score);
+      saveMyRating(bar.id, score, comment);
       updatePersistenceNote();
       openBar(bar.id, { reopen: false });
       render();
       const nextStatus = document.getElementById("rateStatus");
-      if (nextStatus) nextStatus.textContent = `Lagret: ${score}/10 — ${SCALE_LABELS[score - 1]}.`;
+      if (nextStatus) {
+        nextStatus.textContent = comment.trim()
+          ? `Lagret: ${score}/10 — ${SCALE_LABELS[score - 1]}. Kommentaren er oppdatert.`
+          : `Lagret: ${score}/10 — ${SCALE_LABELS[score - 1]}.`;
+      }
     } catch (err) {
       if (status) status.textContent = err.message || "Noe gikk galt.";
       buttons.forEach((btn) => {
         btn.disabled = false;
       });
+      if (saveBtn) saveBtn.disabled = false;
     }
   }
 
@@ -670,6 +922,18 @@
     if (viewGridBtn) viewGridBtn.addEventListener("click", () => setViewMode("grid"));
     if (viewListBtn) viewListBtn.addEventListener("click", () => setViewMode("list"));
     if (viewMapBtn) viewMapBtn.addEventListener("click", () => setViewMode("map"));
+    if (tabRated) {
+      tabRated.addEventListener("click", () => {
+        rankingFilter = "rated";
+        render();
+      });
+    }
+    if (tabUnrated) {
+      tabUnrated.addEventListener("click", () => {
+        rankingFilter = "unrated";
+        render();
+      });
+    }
     if (barDialog) {
       barDialog.addEventListener("click", (event) => {
         if (event.target === barDialog) barDialog.close();
@@ -704,7 +968,9 @@
 
   async function loadRatings() {
     try {
-      const response = await fetch("/api/ratings", { cache: "no-store" });
+      const response = await fetch(`/api/ratings?visitorId=${encodeURIComponent(visitorId())}`, {
+        cache: "no-store",
+      });
       if (!response.ok) return;
       const json = await response.json();
       ratings = json.ratings || {};

@@ -29,12 +29,28 @@ module.exports = async function (context, req) {
 
   try {
     if (req.method === "GET") {
-      json(context, req, 200, await store.getAggregates());
+      const visitorId =
+        (req.query && (req.query.visitorId || req.query.visitorid)) || null;
+      json(context, req, 200, await store.getAggregates(visitorId));
       return;
     }
 
     if (req.method === "POST") {
       const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+      if (body.commentId != null || body.vote != null) {
+        json(
+          context,
+          req,
+          200,
+          await store.upsertCommentVote({
+            barId: body.barId,
+            commentId: body.commentId,
+            visitorId: body.visitorId,
+            vote: body.vote,
+          })
+        );
+        return;
+      }
       json(
         context,
         req,
@@ -43,6 +59,7 @@ module.exports = async function (context, req) {
           barId: body.barId,
           score: Number(body.score),
           visitorId: body.visitorId,
+          comment: body.comment,
         })
       );
       return;
