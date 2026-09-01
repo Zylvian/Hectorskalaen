@@ -1293,7 +1293,7 @@ body {
     align-items: center;
     justify-content: center;
     position: fixed;
-    top: 46%;
+    top: 7.5rem;
     right: 0;
     z-index: 3900;
     width: 44px;
@@ -1306,7 +1306,6 @@ body {
     color: var(--accent);
     box-shadow: -6px 0 18px rgba(0, 0, 0, 0.35);
     cursor: pointer;
-    transform: translateY(-50%);
     transition: right 0.22s ease, background var(--transition-fast), color var(--transition-fast);
   }
 
@@ -1368,19 +1367,20 @@ body {
     position: fixed;
     top: 0;
     right: 0;
-    bottom: 0;
+    bottom: auto;
     --filters-drawer-width: min(14rem, 66vw);
     width: var(--filters-drawer-width);
-    height: 100dvh;
+    height: auto;
+    max-height: 100dvh;
     margin: 0;
-    border-radius: 16px 0 0 16px;
+    border-radius: 0 0 0 20px;
     z-index: 4500;
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: stretch;
     justify-content: flex-start;
-    gap: 26px;
-    padding: 20px 14px 32px;
+    gap: 22px;
+    padding: 18px 14px 22px;
     overflow-y: auto;
     transform: translateX(100%);
     visibility: hidden;
@@ -1394,18 +1394,27 @@ body {
     pointer-events: auto;
   }
 
-  .search-group {
+  #filtersDrawer .search-group,
+  #filtersDrawer .toolbar-filters,
+  #filtersDrawer .filters-drawer-head {
     flex: 0 0 auto;
+  }
+
+  .search-group {
     width: 100%;
     min-width: 0;
     gap: 8px;
   }
 
   .toolbar-filters {
-    flex: 0 0 auto;
     flex-direction: column;
     align-items: stretch;
-    gap: 20px;
+    justify-content: flex-start;
+    gap: 18px;
+  }
+
+  #filtersDrawer .view-toggle-group {
+    margin-top: 0;
   }
 
   .toolbar-filters select,
