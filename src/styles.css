@@ -29,40 +29,56 @@ body {
   min-height: 100%;
   color-scheme: dark;
   scrollbar-width: thin;
-  scrollbar-color: rgba(244, 239, 228, 0.32) rgba(255, 255, 255, 0.05);
+  scrollbar-color: rgba(231, 193, 79, 0.55) #14161c;
 }
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(244, 239, 228, 0.32) rgba(255, 255, 255, 0.05);
-}
-
-*::-webkit-scrollbar {
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.bar-dialog::-webkit-scrollbar,
+.comment-list::-webkit-scrollbar,
+.comment-list--hidden::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-*::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.04);
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+.bar-dialog::-webkit-scrollbar-track,
+.comment-list::-webkit-scrollbar-track,
+.comment-list--hidden::-webkit-scrollbar-track {
+  background: #14161c;
   border-radius: 999px;
-  margin: 4px;
 }
 
-*::-webkit-scrollbar-thumb {
-  background: rgba(244, 239, 228, 0.28);
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+.bar-dialog::-webkit-scrollbar-thumb,
+.comment-list::-webkit-scrollbar-thumb,
+.comment-list--hidden::-webkit-scrollbar-thumb {
+  background: rgba(231, 193, 79, 0.45);
   border-radius: 999px;
-  border: 2px solid transparent;
-  background-clip: content-box;
+  border: 2px solid #101218;
+  background-clip: padding-box;
 }
 
-*::-webkit-scrollbar-thumb:hover {
-  background: rgba(231, 193, 79, 0.7);
-  border: 2px solid transparent;
-  background-clip: content-box;
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+.bar-dialog::-webkit-scrollbar-thumb:hover,
+.comment-list::-webkit-scrollbar-thumb:hover,
+.comment-list--hidden::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
 }
 
-*::-webkit-scrollbar-corner {
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner,
+.bar-dialog::-webkit-scrollbar-corner,
+.comment-list::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(231, 193, 79, 0.55) #14161c;
 }
 
 body {
@@ -716,7 +732,8 @@ body {
   padding: 0;
   box-shadow: var(--shadow-soft);
   scrollbar-width: thin;
-  scrollbar-color: rgba(244, 239, 228, 0.32) rgba(16, 18, 24, 0.9);
+  scrollbar-color: rgba(231, 193, 79, 0.55) #14161c;
+  color-scheme: dark;
 }
 
 .bar-dialog::backdrop {
@@ -993,7 +1010,7 @@ body {
   max-height: 240px;
   overflow: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(244, 239, 228, 0.32) rgba(255, 255, 255, 0.04);
+  scrollbar-color: rgba(231, 193, 79, 0.55) #14161c;
 }
 
 .comment-list li {
