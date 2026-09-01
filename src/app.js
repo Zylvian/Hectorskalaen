@@ -54,6 +54,7 @@
   const mapPanel = document.getElementById("mapPanel");
   const listWrapper = document.querySelector(".bars-scroll-wrapper");
   const barDialog = document.getElementById("barDialog");
+  const dialogScrim = document.getElementById("dialogScrim");
   const dialogBody = document.getElementById("dialogBody");
   const persistenceNote = document.getElementById("persistenceNote");
 
@@ -722,11 +723,11 @@
         openBar(bar.id, { reopen: false });
       });
     });
-    if (reopen && typeof barDialog.showModal === "function" && !barDialog.open) {
-      barDialog.showModal();
-    } else if (reopen && !barDialog.open) {
-      barDialog.setAttribute("open", "");
+    if (reopen && !barDialog.open) {
+      if (typeof barDialog.show === "function") barDialog.show();
+      else barDialog.setAttribute("open", "");
     }
+    if (dialogScrim) dialogScrim.hidden = !barDialog.open;
   }
 
   function bindCommentVotes(bar) {
@@ -984,6 +985,19 @@
     if (viewGridBtn) viewGridBtn.addEventListener("click", () => setViewMode("grid"));
     if (viewListBtn) viewListBtn.addEventListener("click", () => setViewMode("list"));
     if (viewMapBtn) viewMapBtn.addEventListener("click", () => setViewMode("map"));
+    document.querySelector(".header-home")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (barDialog?.open) barDialog.close();
+      searchQuery = "";
+      if (searchInput) searchInput.value = "";
+      rankingFilter = "rated";
+      amenityFilter = "all";
+      sortMode = "worst";
+      if (amenityFilterEl) amenityFilterEl.value = "all";
+      if (sortSelect) sortSelect.value = "worst";
+      setViewMode("map");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
     if (tabRated) {
       tabRated.addEventListener("click", () => {
         rankingFilter = "rated";
@@ -996,15 +1010,24 @@
         render();
       });
     }
+    if (dialogScrim) {
+      dialogScrim.addEventListener("click", () => barDialog?.close());
+    }
     if (barDialog) {
       barDialog.addEventListener("click", (event) => {
         if (event.target === barDialog) barDialog.close();
       });
       barDialog.addEventListener("close", () => {
+        if (dialogScrim) dialogScrim.hidden = true;
         selectedMapBarId = null;
         document.querySelectorAll(".map-pin.is-selected").forEach((el) => {
           el.classList.remove("is-selected");
         });
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && barDialog.open) {
+          barDialog.close();
+        }
       });
     }
   }
