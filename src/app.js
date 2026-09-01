@@ -22,8 +22,8 @@
   const MY_RATINGS_KEY = "hectorskalaen.myRatings";
   const COMMENT_MAX = 280;
   /** Torgallmenningen / Vågen. Outliers stay on the map but do not pull the start view. */
-  const MAP_DEFAULT_CENTER = [60.393, 5.3242];
-  const MAP_DEFAULT_ZOOM = 16;
+  const MAP_DEFAULT_CENTER = [60.3935, 5.3238];
+  const MAP_DEFAULT_ZOOM = 15;
 
   /** @type {Array<any>} */
   let bars = [];
@@ -508,7 +508,6 @@
         }).addTo(map);
       }
       map.invalidateSize();
-      requestAnimationFrame(() => map?.invalidateSize());
       clearMapMarkers();
       const filtered = filteredBars();
       const bounds = [];
@@ -537,14 +536,17 @@
       });
       const search = searchQuery.trim();
       const fitKey = `${rankingFilter}|${amenityFilter}|${search.toLowerCase()}`;
-      if (fitKey !== mapFitKey) {
+      requestAnimationFrame(() => {
+        if (!map) return;
+        map.invalidateSize();
+        if (fitKey === mapFitKey) return;
         if (search && bounds.length) {
           map.fitBounds(bounds, { padding: [48, 48], maxZoom: 17 });
         } else {
           map.setView(MAP_DEFAULT_CENTER, MAP_DEFAULT_ZOOM);
         }
         mapFitKey = fitKey;
-      }
+      });
       if (resultsSummary) {
         resultsSummary.textContent =
           rankingFilter === "rated"
