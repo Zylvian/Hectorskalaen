@@ -497,12 +497,12 @@ body {
 .map-canvas {
   height: 72vh;
   width: 100%;
-  background: #d8d4c8;
+  background: #e6e2d6;
 }
 
 .leaflet-container {
   font-family: var(--font-body);
-  background: #d8d4c8;
+  background: #e6e2d6;
 }
 
 .leaflet-control-zoom a {

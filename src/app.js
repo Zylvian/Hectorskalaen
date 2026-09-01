@@ -466,12 +466,10 @@
           zoomControl: false,
         }).setView([60.3913, 5.3221], 14);
         L.control.zoom({ position: "bottomright" }).addTo(map);
-        L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-          maxZoom: 20,
-          maxNativeZoom: 19,
-          subdomains: "abcd",
+        L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+          maxZoom: 19,
           attribution:
-            "&copy; <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener noreferrer\">OpenStreetMap</a> &copy; <a href=\"https://carto.com/attributions\" target=\"_blank\" rel=\"noopener noreferrer\">CARTO</a>",
+            "Tiles &copy; Esri — Source: Esri, TomTom, Garmin, FAO, NOAA, USGS",
         }).addTo(map);
       }
       map.invalidateSize();
@@ -484,7 +482,6 @@
         const color = stats.average == null ? "#e7c14f" : ratingColor(stats.average);
         const marker = L.marker([bar.lat, bar.lon], {
           icon: mapPinIcon(bar, stats, color),
-          title: bar.title,
           riseOnHover: true,
           keyboard: true,
         }).addTo(map);

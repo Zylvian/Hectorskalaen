@@ -210,7 +210,7 @@ async function main() {
   assert(homepage.includes('id="viewMap"'), "homepage should include a map view toggle");
   const appJs = await readFile(new URL("../src/app.js", import.meta.url), "utf8");
   assert(appJs.includes("mapHoverHtml"), "map hover card helper missing");
-  assert(appJs.includes("basemaps.cartocdn.com"), "map should use street tiles");
+  assert(appJs.includes("World_Street_Map"), "map should use street tiles");
 
   await rm(dir, { recursive: true, force: true });
   console.log("All store and catalog checks passed.");
