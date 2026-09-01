@@ -7,7 +7,7 @@
     "start": "node scripts/dev-server.mjs",
     "fetch-bars": "node scripts/fetch-bergen-bars.mjs",
     "fetch-images": "node scripts/fetch-bar-images.mjs",
-    "test": "node scripts/test-store.mjs",
+    "test": "node scripts/test-store.mjs && node scripts/test-rate-limit.mjs",
     "build": "echo \"Static site – nothing to build\""
   },
   "keywords": [

@@ -45,6 +45,7 @@ npm test
 - The homepage lists bars that already have a score. Use **Uten score** to browse the rest.
 - The ten original scores are seeded once as editorial votes so the old ranking is the starting point, not a wipe.
 - Each browser gets an anonymous id in `localStorage`. Re-rating the same bar updates that vote and comment.
+- Vote POSTs are lightly limited per IP (about 40/minute and 200/hour) so a script cannot dump a thousand requests. GET is not limited.
 
 ### Production database (Turso)
 

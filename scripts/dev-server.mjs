@@ -6,6 +6,7 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const store = require("../api/lib/store.js");
+const rateLimit = require("../api/lib/rate-limit.js");
 
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const PUBLIC_DIR = join(ROOT, "src");
@@ -30,6 +31,7 @@ function sendJson(res, status, body) {
     "Content-Type": "application/json; charset=utf-8",
     "Content-Length": Buffer.byteLength(payload),
     "Cache-Control": "no-store",
+    ...(status === 429 ? { "Retry-After": "60" } : {}),
   });
   res.end(payload);
 }
@@ -60,6 +62,7 @@ async function handleApi(req, res) {
       return;
     }
     if (req.method === "POST") {
+      rateLimit.assertPostAllowed(req);
       const body = await readBody(req);
       if (body.commentId != null || body.vote != null) {
         sendJson(
