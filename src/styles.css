@@ -852,6 +852,54 @@ body {
   font-weight: 600;
 }
 
+.comment-list--hidden {
+  max-height: 180px;
+  padding: 8px 10px 10px;
+}
+
+.comment-list--hidden li {
+  opacity: 0.78;
+}
+
+.hidden-comments {
+  margin-top: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.hidden-comments summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 10px 12px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.hidden-comments summary::-webkit-details-marker {
+  display: none;
+}
+
+.hidden-comments summary::before {
+  content: "▸ ";
+  color: var(--accent);
+}
+
+.hidden-comments[open] summary::before {
+  content: "▾ ";
+}
+
+.hidden-comments[open] summary {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.hidden-comments-note {
+  margin: 0;
+  padding: 8px 12px 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
 .comment-list {
   list-style: none;
   margin: 0;

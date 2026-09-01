@@ -32,6 +32,7 @@
   let amenityFilter = "all";
   let rankingFilter = "rated";
   let commentSort = "upvotes";
+  let hiddenCommentsOpen = false;
   let commentVoteBusy = false;
   let userLocation = null;
   let map = null;
@@ -569,19 +570,17 @@
     return items;
   }
 
-  function commentsHtml(comments) {
-    const list = sortComments(comments);
-    if (!list.length) {
-      return `<p class="dialog-empty">Ingen kommentarer ennå. Du kan legge igjen en sammen med stemmen.</p>`;
-    }
-    return `<ul class="comment-list">${list
-      .map((item) => {
-        const up = voteCount(item.upvotes);
-        const down = voteCount(item.downvotes);
-        const upActive = voteCount(item.myVote) === 1 ? " is-active" : "";
-        const downActive = voteCount(item.myVote) === -1 ? " is-active" : "";
-        const own = Boolean(item.own);
-        return `<li>
+  function commentNet(item) {
+    return voteCount(item.upvotes) - voteCount(item.downvotes);
+  }
+
+  function commentItemHtml(item) {
+    const up = voteCount(item.upvotes);
+    const down = voteCount(item.downvotes);
+    const upActive = voteCount(item.myVote) === 1 ? " is-active" : "";
+    const downActive = voteCount(item.myVote) === -1 ? " is-active" : "";
+    const own = Boolean(item.own);
+    return `<li>
           <span class="comment-score" style="color:${ratingColor(item.score)}">${item.score}/10</span>
           <div class="comment-body">
             <p>${escapeHtml(item.comment)}</p>
@@ -592,13 +591,34 @@
             </div>
           </div>
         </li>`;
-      })
-      .join("")}</ul>`;
+  }
+
+  function commentsHtml(comments) {
+    const list = sortComments(comments);
+    if (!list.length) {
+      return `<p class="dialog-empty">Ingen kommentarer ennå. Du kan legge igjen en sammen med stemmen.</p>`;
+    }
+    const visible = list.filter((item) => commentNet(item) >= 0);
+    const hidden = list.filter((item) => commentNet(item) <= -1);
+    const visibleBlock = visible.length
+      ? `<ul class="comment-list">${visible.map(commentItemHtml).join("")}</ul>`
+      : `<p class="dialog-empty">Ingen synlige kommentarer. Nedstemte ligger skjult under.</p>`;
+    const hiddenLabel =
+      hidden.length === 1 ? "1 skjult kommentar" : `${hidden.length} skjulte kommentarer`;
+    const hiddenBlock = hidden.length
+      ? `<details class="hidden-comments"${hiddenCommentsOpen ? " open" : ""}>
+          <summary>${hiddenLabel} (−1 eller lavere)</summary>
+          <p class="hidden-comments-note">Nedstemt som støtende eller feil. Åpne for å se eller like dem tilbake.</p>
+          <ul class="comment-list comment-list--hidden">${hidden.map(commentItemHtml).join("")}</ul>
+        </details>`
+      : "";
+    return `${visibleBlock}${hiddenBlock}`;
   }
 
   function openBar(barId, { reopen = true } = {}) {
     const bar = bars.find((item) => item.id === barId);
     if (!bar || !barDialog || !dialogBody) return;
+    if (reopen) hiddenCommentsOpen = false;
     selectedMapBarId = barId;
     document.querySelectorAll(".map-pin").forEach((el) => {
       el.classList.toggle("is-selected", el.getAttribute("data-bar-id") === barId);
@@ -693,6 +713,9 @@
       });
     }
     bindCommentVotes(bar);
+    dialogBody?.querySelector(".hidden-comments")?.addEventListener("toggle", (event) => {
+      hiddenCommentsOpen = Boolean(event.currentTarget.open);
+    });
     dialogBody?.querySelectorAll("[data-comment-sort]").forEach((btn) => {
       btn.addEventListener("click", () => {
         commentSort = btn.getAttribute("data-comment-sort") === "newest" ? "newest" : "upvotes";
