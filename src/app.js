@@ -724,10 +724,13 @@
       });
     });
     if (reopen && !barDialog.open) {
-      if (typeof barDialog.show === "function") barDialog.show();
+      if (typeof barDialog.showModal === "function") barDialog.showModal();
+      else if (typeof barDialog.show === "function") barDialog.show();
       else barDialog.setAttribute("open", "");
     }
-    if (dialogScrim) dialogScrim.hidden = !barDialog.open;
+    if (dialogScrim) {
+      dialogScrim.hidden = barDialog.matches(":modal") || !barDialog.open;
+    }
   }
 
   function bindCommentVotes(bar) {

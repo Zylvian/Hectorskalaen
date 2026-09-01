@@ -496,6 +496,7 @@ body {
 
 .map-panel {
   position: relative;
+  z-index: 0;
   isolation: isolate;
   min-height: 72vh;
   border-radius: 20px;
