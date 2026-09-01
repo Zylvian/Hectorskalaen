@@ -38,10 +38,12 @@
             friskt. 10 er piss. Stem selv — snittet oppdateres live.
           </p>
         </div>
-        <nav class="header-nav" aria-label="Sider">
-          <a class="nav-link is-active" href="index.html">Barer</a>
-          <a class="nav-link" href="game.html">Spill</a>
-        </nav>
+        <div class="header-actions">
+          <nav class="header-nav" aria-label="Sider">
+            <a class="nav-link is-active" href="index.html">Barer</a>
+            <a class="nav-link" href="game.html">Spill</a>
+          </nav>
+        </div>
       </header>
 
       <section class="scale-panel" aria-label="Slik fungerer skalaen">
@@ -73,7 +75,11 @@
         </article>
       </section>
 
-      <div class="toolbar">
+      <div class="toolbar" id="filtersDrawer">
+        <div class="filters-drawer-head">
+          <h2>Søk og filter</h2>
+          <button type="button" class="btn-ghost" id="filtersClose">Lukk</button>
+        </div>
         <div class="search-group">
           <label for="searchInput">Søk etter bar</label>
           <input
@@ -148,6 +154,17 @@
       </footer>
     </div>
 
+    <button
+      type="button"
+      class="filters-toggle"
+      id="filtersToggle"
+      aria-expanded="false"
+      aria-controls="filtersDrawer"
+      aria-label="Vis søk og filter"
+    >
+      <span class="filters-toggle-chevron" aria-hidden="true"></span>
+    </button>
+    <button type="button" id="filtersScrim" class="filters-scrim" hidden aria-label="Lukk meny"></button>
     <button type="button" id="dialogScrim" class="dialog-scrim" hidden aria-label="Lukk"></button>
     <dialog id="barDialog" class="bar-dialog">
       <div class="bar-dialog-scroll">

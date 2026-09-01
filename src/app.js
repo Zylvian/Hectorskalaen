@@ -51,6 +51,10 @@
   const viewMapBtn = document.getElementById("viewMap");
   const tabRated = document.getElementById("tabRated");
   const tabUnrated = document.getElementById("tabUnrated");
+  const filtersToggle = document.getElementById("filtersToggle");
+  const filtersClose = document.getElementById("filtersClose");
+  const filtersScrim = document.getElementById("filtersScrim");
+  const filtersDrawer = document.getElementById("filtersDrawer");
   const mapPanel = document.getElementById("mapPanel");
   const listWrapper = document.querySelector(".bars-scroll-wrapper");
   const barDialog = document.getElementById("barDialog");
@@ -501,6 +505,7 @@
         }).addTo(map);
       }
       map.invalidateSize();
+      requestAnimationFrame(() => map?.invalidateSize());
       clearMapMarkers();
       const filtered = filteredBars();
       const bounds = [];
@@ -885,6 +890,29 @@
     }
   }
 
+  const MOBILE_FILTERS_MQ = "(max-width: 760px) and (pointer: coarse)";
+
+  function isMobileFilters() {
+    return window.matchMedia(MOBILE_FILTERS_MQ).matches;
+  }
+
+  function setFiltersOpen(open) {
+    const next = Boolean(open) && isMobileFilters();
+    document.body.classList.toggle("filters-open", next);
+    filtersToggle?.setAttribute("aria-expanded", String(next));
+    filtersToggle?.setAttribute("aria-label", next ? "Lukk søk og filter" : "Vis søk og filter");
+    if (filtersScrim) filtersScrim.hidden = !next;
+    if (filtersDrawer) {
+      if (isMobileFilters()) filtersDrawer.toggleAttribute("inert", !next);
+      else filtersDrawer.removeAttribute("inert");
+    }
+    if (next) {
+      (filtersClose || searchInput)?.focus();
+    } else if (document.activeElement && filtersDrawer?.contains(document.activeElement)) {
+      filtersToggle?.focus();
+    }
+  }
+
   function setViewMode(mode) {
     viewMode = mode;
     if (viewGridBtn && viewListBtn && viewMapBtn) {
@@ -892,6 +920,7 @@
       viewListBtn.classList.toggle("btn-toggle--active", mode === "list");
       viewMapBtn.classList.toggle("btn-toggle--active", mode === "map");
     }
+    setFiltersOpen(false);
     render();
   }
 
@@ -1013,9 +1042,19 @@
     if (viewGridBtn) viewGridBtn.addEventListener("click", () => setViewMode("grid"));
     if (viewListBtn) viewListBtn.addEventListener("click", () => setViewMode("list"));
     if (viewMapBtn) viewMapBtn.addEventListener("click", () => setViewMode("map"));
+    filtersToggle?.addEventListener("click", () => {
+      setFiltersOpen(!document.body.classList.contains("filters-open"));
+    });
+    filtersClose?.addEventListener("click", () => setFiltersOpen(false));
+    filtersScrim?.addEventListener("click", () => setFiltersOpen(false));
+    window.matchMedia(MOBILE_FILTERS_MQ).addEventListener("change", () => {
+      setFiltersOpen(false);
+    });
+    setFiltersOpen(false);
     document.querySelector(".header-home")?.addEventListener("click", (event) => {
       event.preventDefault();
       if (barDialog?.open) barDialog.close();
+      setFiltersOpen(false);
       searchQuery = "";
       if (searchInput) searchInput.value = "";
       rankingFilter = "rated";
@@ -1053,9 +1092,13 @@
         });
       });
       document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && barDialog.open) {
-          barDialog.close();
+        if (event.key !== "Escape") return;
+        if (document.body.classList.contains("filters-open")) {
+          event.preventDefault();
+          setFiltersOpen(false);
+          return;
         }
+        if (barDialog.open) barDialog.close();
       });
     }
   }
