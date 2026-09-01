@@ -984,6 +984,19 @@
     if (viewGridBtn) viewGridBtn.addEventListener("click", () => setViewMode("grid"));
     if (viewListBtn) viewListBtn.addEventListener("click", () => setViewMode("list"));
     if (viewMapBtn) viewMapBtn.addEventListener("click", () => setViewMode("map"));
+    document.querySelector(".header-home")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (barDialog?.open) barDialog.close();
+      searchQuery = "";
+      if (searchInput) searchInput.value = "";
+      rankingFilter = "rated";
+      amenityFilter = "all";
+      sortMode = "worst";
+      if (amenityFilterEl) amenityFilterEl.value = "all";
+      if (sortSelect) sortSelect.value = "worst";
+      setViewMode("map");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
     if (tabRated) {
       tabRated.addEventListener("click", () => {
         rankingFilter = "rated";

@@ -99,6 +99,18 @@ body {
   line-height: 0.9;
 }
 
+.header-home {
+  color: inherit;
+  text-decoration: none;
+  display: inline-block;
+  width: fit-content;
+}
+
+.header-home:hover h1,
+.header-home:focus-visible h1 {
+  color: var(--accent);
+}
+
 .tagline {
   margin: 10px 0 0;
   max-width: 62ch;
