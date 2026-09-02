@@ -27,7 +27,7 @@
 
   /** @type {Array<any>} */
   let bars = [];
-  /** @type {Record<string, {average: number|null, count: number, histogram: number[], comments?: Array<{score:number, comment:string}>}>} */
+  /** @type {Record<string, {average: number|null, count: number, histogram: number[], comments?: Array<{score:number, comment:string, updatedAt?: string|null}>, votes?: Array<{score:number, updatedAt?: string|null}>}>} */
   let ratings = {};
   let searchQuery = "";
   let sortMode = "worst";
@@ -147,7 +147,7 @@
     const live = ratings[bar.id];
     if (live && live.count > 0 && typeof live.average === "number") {
       const average = averageFromHistogram(live.histogram) ?? roundToTenth(live.average);
-      return { ...live, average, comments: live.comments || [] };
+      return { ...live, average, comments: live.comments || [], votes: live.votes || [] };
     }
     if (typeof bar.seedRating === "number") {
       return {
@@ -155,10 +155,11 @@
         count: 0,
         histogram: null,
         comments: [],
+        votes: [],
         seeded: true,
       };
     }
-    return { average: null, count: 0, histogram: null, comments: [] };
+    return { average: null, count: 0, histogram: null, comments: [], votes: [] };
   }
 
   function isRated(bar) {

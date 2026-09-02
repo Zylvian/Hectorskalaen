@@ -24,6 +24,10 @@ async function main() {
   assert(first.persistence === "file", `expected file persistence, got ${first.persistence}`);
   assert(first.ratings["osm-n2839876148"].average === 10, "Hector seed rating should be 10");
   assert(first.ratings["osm-n2839876148"].count === 1, "Hector should start with the editorial seed vote");
+  assert(
+    (first.ratings["osm-n2839876148"].votes || []).length === 0,
+    "editorial seed vote should not appear in public votes"
+  );
 
   const visitorId = "11111111-1111-4111-8111-111111111111";
   const updated = await store.upsertRating({
@@ -33,6 +37,18 @@ async function main() {
   });
   assert(updated.stats.count === 2, "user vote should add to the seed");
   assert(updated.stats.average === 9, `expected 9, got ${updated.stats.average}`);
+  assert(updated.stats.comments.length === 0, "score-only vote should not appear as a comment");
+  assert(updated.stats.votes.length === 1, "score-only vote should appear in votes");
+  assert(updated.stats.votes[0].score === 8, "vote payload should keep the score");
+  assert(
+    typeof updated.stats.votes[0].updatedAt === "string" &&
+      updated.stats.votes[0].updatedAt.length > 0,
+    "score-only vote should include a timestamp"
+  );
+  assert(
+    !("visitorId" in updated.stats.votes[0]),
+    "vote payload should stay anonymous"
+  );
 
   const changed = await store.upsertRating({
     barId: "osm-n2839876148",
@@ -41,6 +57,8 @@ async function main() {
   });
   assert(changed.stats.count === 2, "updating a vote should not add another");
   assert(changed.stats.average === 7, `expected 7, got ${changed.stats.average}`);
+  assert(changed.stats.votes.length === 1, "updating a vote should not add another public vote");
+  assert(changed.stats.votes[0].score === 4, "updated score-only vote should keep the new score");
 
   const withComment = await store.upsertRating({
     barId: "osm-n2839876148",
@@ -56,6 +74,13 @@ async function main() {
     "comment should be trimmed"
   );
   assert(withComment.stats.comments[0].score === 6, "comment should keep the score");
+  assert(withComment.stats.votes.length === 1, "commented vote should still appear in votes");
+  assert(withComment.stats.votes[0].score === 6, "votes list should follow the updated score");
+  assert(
+    typeof withComment.stats.votes[0].updatedAt === "string" &&
+      withComment.stats.votes[0].updatedAt.length > 0,
+    "commented vote should keep a timestamp"
+  );
 
   const updatedComment = await store.upsertRating({
     barId: "osm-n2839876148",
