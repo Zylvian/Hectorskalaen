@@ -27,19 +27,11 @@
           </p>
         </div>
         <div class="header-actions">
-          <button
-            type="button"
-            class="about-toggle"
-            id="aboutToggle"
-            aria-haspopup="dialog"
-            aria-controls="aboutDialog"
-            aria-label="Hva er Hectorskalaen?"
-          >
-            ?
-          </button>
+          <a class="about-toggle" href="info.html" aria-label="Om Hectorskalaen">?</a>
           <nav class="header-nav" aria-label="Sider">
             <a class="nav-link" href="index.html">Barer</a>
             <a class="nav-link is-active" href="game.html">Spill</a>
+            <a class="nav-link nav-link-info" href="info.html">Info</a>
           </nav>
         </div>
       </header>
@@ -88,28 +80,6 @@
       </footer>
     </div>
 
-    <dialog id="aboutDialog" class="about-dialog" aria-labelledby="aboutTitle">
-      <form method="dialog" class="dialog-chrome">
-        <button class="btn-ghost" value="close" type="submit">Lukk</button>
-      </form>
-      <div class="about-dialog-body">
-        <h2 id="aboutTitle">Hva er Hectorskalaen?</h2>
-        <p>
-          En skala fra 1 til 10 på hvor shit en bar i Bergen lukter. 1 er
-          friskt. 10 er piss. Stem selv — snittet oppdateres live.
-        </p>
-        <div class="scale-track" role="img" aria-label="Luktskala fra 1 til 10">
-          <span>1 friskt</span>
-          <span>5 kjeller</span>
-          <span>10 piss</span>
-        </div>
-        <ol class="scale-keys">
-          <li><strong>1–2</strong> ingen lukt / godt</li>
-          <li><strong>5–6</strong> merkbart</li>
-          <li><strong>9–10</strong> piss-territorium</li>
-        </ol>
-      </div>
-    </dialog>
     <script src="app.js"></script>
   </body>
 </html>
