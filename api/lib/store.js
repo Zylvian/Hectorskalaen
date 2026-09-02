@@ -93,6 +93,7 @@ function emptyStats() {
     count: 0,
     histogram: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     comments: [],
+    votes: [],
   };
 }
 
@@ -149,6 +150,7 @@ function aggregate(rows, votes = [], viewerId = null) {
         count: 0,
         histogram: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         comments: [],
+        votes: [],
       };
       byBar.set(row.barId, entry);
     }
@@ -156,6 +158,12 @@ function aggregate(rows, votes = [], viewerId = null) {
     entry.count += 1;
     entry.histogram[row.score - 1] += 1;
     const text = typeof row.comment === "string" ? row.comment.trim() : "";
+    if (row.visitorId !== SEED_VISITOR) {
+      entry.votes.push({
+        score: row.score,
+        updatedAt: row.updatedAt || null,
+      });
+    }
     if (text && row.visitorId !== SEED_VISITOR) {
       const counts = tallyVotes(votes, row.barId, row.visitorId, viewerId);
       entry.comments.push({
@@ -178,11 +186,15 @@ function aggregate(rows, votes = [], viewerId = null) {
         a.downvotes - b.downvotes ||
         String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""))
     );
+    entry.votes.sort((a, b) =>
+      String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""))
+    );
     ratings[barId] = {
       average: roundToTenth(entry.sum / entry.count),
       count: entry.count,
       histogram: entry.histogram,
       comments: entry.comments.slice(0, 40),
+      votes: entry.votes,
     };
   }
   return ratings;
