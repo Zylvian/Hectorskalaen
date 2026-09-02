@@ -328,6 +328,7 @@ body {
 #guessInput:focus-visible,
 .btn-ghost:focus-visible,
 .rate-btn:focus-visible,
+.about-toggle:focus-visible,
 .nav-link:focus-visible {
   box-shadow: 0 0 0 3px rgba(231, 193, 79, 0.35);
   border-color: var(--accent);
@@ -756,65 +757,8 @@ body {
   scrollbar-color: #c9ae4e #1a1c24;
 }
 
-.bar-dialog::backdrop,
-.about-dialog::backdrop {
+.bar-dialog::backdrop {
   background: rgba(0, 0, 0, 0.72);
-}
-
-.about-dialog {
-  position: fixed;
-  inset: auto;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  margin: 0;
-  z-index: 4600;
-  width: min(22rem, calc(100vw - 32px));
-  max-height: calc(100dvh - 32px);
-  overflow: auto;
-  border: 1px solid var(--border-subtle);
-  border-radius: 24px;
-  background: #101218;
-  color: var(--text);
-  padding: 0;
-  box-shadow: var(--shadow-soft);
-  color-scheme: dark;
-}
-
-.about-dialog .dialog-chrome {
-  padding: 18px 16px 2px;
-}
-
-.about-dialog-body {
-  padding: 8px 22px 28px;
-  display: grid;
-  gap: 20px;
-}
-
-.about-dialog-body h2 {
-  margin: 0;
-  font-family: var(--font-display);
-  letter-spacing: 0.04em;
-  font-size: 1.7rem;
-  font-weight: 400;
-}
-
-.about-dialog-body p {
-  margin: 0;
-  color: var(--text-muted);
-  line-height: 1.65;
-}
-
-.about-dialog .scale-track {
-  height: 16px;
-  padding: 0 2px 26px;
-  margin-top: 4px;
-}
-
-.about-dialog .scale-keys {
-  display: grid;
-  gap: 10px;
-  padding-top: 4px;
 }
 
 .dialog-scrim {
@@ -1240,6 +1184,107 @@ body {
   color: var(--text-muted);
 }
 
+.faq-list {
+  display: grid;
+  gap: 10px;
+  padding: 16px 18px 20px;
+}
+
+.faq-item {
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+}
+
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--transition-fast);
+}
+
+.faq-item[open] summary {
+  background: var(--accent);
+  color: #16140c;
+}
+
+.faq-item[open] summary::after {
+  transform: rotate(225deg);
+}
+
+.faq-item summary:focus-visible {
+  outline: 3px solid rgba(231, 193, 79, 0.45);
+  outline-offset: -3px;
+}
+
+.faq-answer {
+  padding: 16px 18px 18px;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.faq-answer p {
+  margin: 0;
+}
+
+.faq-maker {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.faq-portrait {
+  margin: 0;
+  flex: 0 0 auto;
+  width: 120px;
+}
+
+.faq-portrait img {
+  display: block;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 2px solid var(--accent);
+  background: #1a1c24;
+}
+
+.faq-portrait figcaption {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  line-height: 1.3;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .faq-maker {
+    flex-direction: column;
+  }
+}
+
 .game-area {
   display: flex;
   justify-content: center;
@@ -1312,15 +1357,6 @@ body {
     padding: 16px 14px 6px;
   }
 
-  .about-dialog .dialog-chrome {
-    padding: 20px 18px 6px;
-  }
-
-  .about-dialog-body {
-    padding: 6px 22px 28px;
-    gap: 22px;
-  }
-
   .dialog-body {
     display: flex;
     flex-direction: column;
@@ -1368,7 +1404,11 @@ body {
     font-size: 0.8rem;
   }
 
-  .about-toggle {
+  body:not(.page-info) .nav-link-info {
+    display: none;
+  }
+
+  body:not(.page-info) .about-toggle {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1380,6 +1420,7 @@ body {
     border-radius: 999px;
     background: rgba(20, 23, 31, 0.65);
     color: var(--accent);
+    text-decoration: none;
     font: inherit;
     font-size: 1.15rem;
     font-weight: 700;

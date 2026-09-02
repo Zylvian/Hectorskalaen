@@ -61,8 +61,6 @@
   const mapPanel = document.getElementById("mapPanel");
   const listWrapper = document.querySelector(".bars-scroll-wrapper");
   const barDialog = document.getElementById("barDialog");
-  const aboutToggle = document.getElementById("aboutToggle");
-  const aboutDialog = document.getElementById("aboutDialog");
   const dialogScrim = document.getElementById("dialogScrim");
   const dialogBody = document.getElementById("dialogBody");
   const persistenceNote = document.getElementById("persistenceNote");
@@ -1155,30 +1153,8 @@
     }
   }
 
-  function openAboutDialog() {
-    if (!aboutDialog) return;
-    if (typeof setFiltersOpen === "function") setFiltersOpen(false);
-    if (typeof aboutDialog.showModal === "function") aboutDialog.showModal();
-    else aboutDialog.setAttribute("open", "");
-  }
-
-  function initAboutDialog() {
-    if (!aboutToggle || !aboutDialog) return;
-    aboutToggle.addEventListener("click", openAboutDialog);
-    aboutDialog.addEventListener("click", (event) => {
-      if (event.target === aboutDialog) aboutDialog.close();
-    });
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && aboutDialog.open) {
-        event.preventDefault();
-        aboutDialog.close();
-      }
-    });
-  }
-
   async function init() {
     visitorId();
-    initAboutDialog();
     await loadBarsFromJson();
     await loadRatings();
     if (isGamePage) {
