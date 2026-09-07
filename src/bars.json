@@ -10,12 +10,13 @@
     "imagesFetchedAt": "2026-09-07T14:16:18.511Z",
     "imageSources": {
       "curated": 10,
-      "map": 72,
+      "map": 71,
       "wikipedia": 1,
       "openverse": 21,
       "wikidata": 1,
       "website": 7,
-      "osm": 1
+      "osm": 1,
+      "manual": 1
     }
   },
   "bars": [
@@ -1815,8 +1816,8 @@
       "osmId": 14159664814,
       "website": null,
       "openingHours": null,
-      "picture": "/media/maps/osm-n14159664814.png",
-      "pictureSource": "map",
+      "picture": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHg5Q8jlJo2ehIOhE2wirSIpqOkx5832EjFItN3t4lQzbcxcMVk12rfvOy&s=10",
+      "pictureSource": "manual",
       "description": null,
       "seedRating": null,
       "curated": false

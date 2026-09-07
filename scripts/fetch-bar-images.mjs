@@ -332,7 +332,7 @@ async function main() {
     catalog.bars.filter((bar) => bar.curated && bar.picture).map((bar) => bar.picture)
   );
   for (const bar of catalog.bars) {
-    if (bar.curated) continue;
+    if (bar.curated || bar.pictureSource === "manual") continue;
     if (bar.pictureSource === "map") {
       if (!isLocalMap(bar.picture)) {
         Object.assign(bar, await mapPicture(bar));
