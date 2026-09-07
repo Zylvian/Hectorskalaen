@@ -4,10 +4,10 @@
     "source": "OpenStreetMap Overpass API",
     "license": "ODbL 1.0",
     "bbox": "60.29,5.14,60.54,5.55",
-    "fetchedAt": "2026-08-26T10:48:40.110Z",
-    "barCount": 112,
+    "fetchedAt": "2026-09-07T14:14:01.723Z",
+    "barCount": 113,
     "note": "Editorial photos, descriptions and seedRating come from src/data/original-bars.json. Live community scores live in the ratings API. Venue photos are looked up with npm run fetch-images.",
-    "imagesFetchedAt": "2026-08-31T12:20:39.647Z",
+    "imagesFetchedAt": "2026-09-07T14:16:18.511Z",
     "imageSources": {
       "curated": 10,
       "map": 71,
@@ -15,7 +15,8 @@
       "openverse": 21,
       "wikidata": 1,
       "website": 7,
-      "osm": 1
+      "osm": 1,
+      "manual": 1
     }
   },
   "bars": [
@@ -31,10 +32,10 @@
       "website": "https://folkogrovere.net/",
       "openingHours": "11:00-02:30",
       "picture": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/1a/95/3b/caption.jpg?w=1200&h=1200&s=1",
+      "pictureSource": "curated",
       "description": "Ha med deg gassmaske og chastity belt.",
       "seedRating": 9,
-      "curated": true,
-      "pictureSource": "curated"
+      "curated": true
     },
     {
       "id": "osm-n2840313647",
@@ -48,10 +49,10 @@
       "website": "https://www.fotballpuben.no/",
       "openingHours": "Mo-Sa 09:00-03:00; Su 12:00-03:00",
       "picture": "https://premium.vgc.no/v2/images/826c7e18-5984-4a7f-8c55-cd96b03fe033?fit=crop&format=auto&h=1296&w=1900&s=b77d62098c176b117cc4fed86d92e1459b3f46dc",
+      "pictureSource": "curated",
       "description": "Angst, Vikingfjord og nylig skilsmisse.",
       "seedRating": 9,
-      "curated": true,
-      "pictureSource": "curated"
+      "curated": true
     },
     {
       "id": "osm-n2839876148",
@@ -65,16 +66,16 @@
       "website": null,
       "openingHours": null,
       "picture": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/16/83/07/hectors-hybel.jpg?w=1200&h=-1&s=1",
+      "pictureSource": "curated",
       "description": "En legendarisk dårlig luktende bar og inspirasjonen til Hectorskalaen.",
       "seedRating": 10,
-      "curated": true,
-      "pictureSource": "curated"
+      "curated": true
     },
     {
       "id": "osm-n287763936",
       "title": "Henrik øl- og vinstove",
       "osmName": "Henrik øl og vinstove",
-      "amenity": "pub",
+      "amenity": "bar",
       "lat": 60.391785,
       "lon": 5.320661,
       "osmType": "node",
@@ -82,16 +83,16 @@
       "website": "https://www.ve.no/",
       "openingHours": "Su-Fr 16:00-00:30, Sa 15:00-00:30",
       "picture": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2c/a8/34/f5/caption.jpg?w=900&h=500&s=1",
+      "pictureSource": "curated",
       "description": "Mild lukt til en beroligende atmosfære.",
       "seedRating": 2,
-      "curated": true,
-      "pictureSource": "curated"
+      "curated": true
     },
     {
       "id": "osm-n2839876150",
       "title": "Kråken",
       "osmName": "Kråken",
-      "amenity": "pub",
+      "amenity": "bar",
       "lat": 60.391548,
       "lon": 5.321034,
       "osmType": "node",
@@ -99,10 +100,10 @@
       "website": "http://www.boha.no/en/onkel-lauritz/",
       "openingHours": "Mo-Th 16:00-01:30; Fr 16:00-03:00; Sa 13:00-03:00; Su 16:00-01:30",
       "picture": "https://s3-media0.fl.yelpcdn.com/bphoto/5yDhWcWcvfl56vz8KXzKZA/348s.jpg",
+      "pictureSource": "curated",
       "description": "Pass opp for Magic Mondays though.",
       "seedRating": 3,
-      "curated": true,
-      "pictureSource": "curated"
+      "curated": true
     },
     {
       "id": "osm-n3126099180",
@@ -116,10 +117,10 @@
       "website": "https://www.kulturhusetibergen.no",
       "openingHours": null,
       "picture": "https://images.squarespace-cdn.com/content/v1/5e3558b2fb55d365939bc5a4/9670f26b-6b00-48e8-a76f-a5086508018a/aec-1.jpg",
+      "pictureSource": "curated",
       "description": "Sterilt og dyrt, nett sånn som de som går der.",
       "seedRating": 2,
-      "curated": true,
-      "pictureSource": "curated"
+      "curated": true
     },
     {
       "id": "osm-n4139184734",
@@ -133,10 +134,10 @@
       "website": null,
       "openingHours": "Mo 17:00-01:00; Tu-We 20:00-01:00; Th-Sa 19:00-03:30",
       "picture": "https://photos.smugmug.com/Debates/2018/Politisk-Aften-i-Gr%C3%B8ndahls/i-p3Tmn7J/2/MDF5kZK3kmmBvsSCSvtPsLjrnMDW6zLBDbGZghFJJ/L/IMG_1210-L.jpg",
+      "pictureSource": "curated",
       "description": "Litt mer svettelukt enn de fleste andre lokasjoner.",
       "seedRating": 6,
-      "curated": true,
-      "pictureSource": "curated"
+      "curated": true
     },
     {
       "id": "osm-n1388494339",
@@ -150,10 +151,10 @@
       "website": null,
       "openingHours": "Mo-Su 16:00-03:00",
       "picture": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU60HWwf4e9KdNNiQ-T-D5XEVQFBjVvm4n0g&s",
+      "pictureSource": "curated",
       "description": "Mulig mugg og lite luft.",
       "seedRating": 5,
-      "curated": true,
-      "pictureSource": "curated"
+      "curated": true
     },
     {
       "id": "osm-n4786575287",
@@ -167,10 +168,10 @@
       "website": null,
       "openingHours": null,
       "picture": "https://img3.restaurantguru.com/w550/h367/rada-Pappa-Bar-og-Salong-interior-2025-06.jpg",
+      "pictureSource": "curated",
       "description": "stinker av litt for god stemning",
       "seedRating": 6,
-      "curated": true,
-      "pictureSource": "curated"
+      "curated": true
     },
     {
       "id": "osm-n3946010557",
@@ -184,10 +185,10 @@
       "website": null,
       "openingHours": "We 20:00-01:00, Th 18:00-01:00, Fr,Sa 16:00-02:30; Su-Tu off",
       "picture": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQrvebtcz0vKpIJbFM677N4OtMr8FWes_7Sw&s",
+      "pictureSource": "curated",
       "description": "Mer parfyme enn oksygen.",
       "seedRating": 8,
-      "curated": true,
-      "pictureSource": "curated"
+      "curated": true
     },
     {
       "id": "osm-n4682353960",
@@ -201,10 +202,10 @@
       "website": "https://www.hoteloleana.com/acido-cocktailbar-restaurant-bergen/",
       "openingHours": null,
       "picture": "/media/maps/osm-n4682353960.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n4185528262",
@@ -218,10 +219,10 @@
       "website": null,
       "openingHours": "Mo-Su off",
       "picture": "/media/maps/osm-n4185528262.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2710063385",
@@ -235,10 +236,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n2710063385.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n391946422",
@@ -252,10 +253,10 @@
       "website": "https://www.apollon.no/",
       "openingHours": "Mo-Sa 10:00-00:30, Su 14:00-00:30",
       "picture": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Apollon2.jpg/960px-Apollon2.jpg",
+      "pictureSource": "wikipedia",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "wikipedia"
+      "curated": false
     },
     {
       "id": "osm-n4399009554",
@@ -269,10 +270,10 @@
       "website": null,
       "openingHours": "Mo-Fr 18:00-00:30, Sa 17:00-00:30",
       "picture": "https://live.staticflickr.com/2695/4150893232_662ca60732_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n4624121602",
@@ -286,10 +287,10 @@
       "website": "https://www.bar3.no/",
       "openingHours": "Mo-Th 16:00-01:30; Fr-Sa 16:00-01:30; Su 16:00-01:30",
       "picture": "/media/maps/osm-n4624121602.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2840313636",
@@ -303,10 +304,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n2840313636.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2839994017",
@@ -320,10 +321,10 @@
       "website": "https://www.barkollektiv.com/",
       "openingHours": "Mo-Fr 15:00-02:30; Sa 12:00-02:30; Su 14:00-20:00",
       "picture": "/media/maps/osm-n2839994017.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n5401407209",
@@ -337,10 +338,10 @@
       "website": "https://belgio.no/",
       "openingHours": "Mo-Su 12:00-24:00",
       "picture": "/media/maps/osm-n5401407209.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2839994018",
@@ -354,10 +355,10 @@
       "website": null,
       "openingHours": "Mo-We 18:00-01:30; Th 18:00-03:00; Fr 17:00-03:00; Sa 16:00-03:00",
       "picture": "/media/maps/osm-n2839994018.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2839876143",
@@ -371,10 +372,10 @@
       "website": "https://www.biskopen.no/",
       "openingHours": "Mo-Th 18:00-03:00; Fr-Sa 15:00-03:00; Su 18:00-03:00",
       "picture": "/media/maps/osm-n2839876143.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3959784421",
@@ -388,10 +389,10 @@
       "website": null,
       "openingHours": null,
       "picture": "https://live.staticflickr.com/65535/53943123061_93319e222a_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n3988515646",
@@ -405,10 +406,10 @@
       "website": "http://www.brukbarbergen.no/",
       "openingHours": "Mo-Th 19:00-02:30; Fr-Sa 19:00-02:30",
       "picture": "/media/maps/osm-n3988515646.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3964625281",
@@ -422,10 +423,10 @@
       "website": "https://www.bryggennightclub.no/",
       "openingHours": "Fr-Sa 22:00-03:00",
       "picture": "https://live.staticflickr.com/1869/42407804230_f7faf542ea_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n4020210424",
@@ -439,10 +440,10 @@
       "website": "https://www.zabr.no/restauranter/bryggeriet/",
       "openingHours": "Tu-Sa 15:00-01:30",
       "picture": "/media/maps/osm-n4020210424.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2840313640",
@@ -456,10 +457,10 @@
       "website": "https://www.borskjelleren.no/",
       "openingHours": "Mo-Th 16:00-01:00; Fr 15:00-02:30; Sa 12:00-02:30; Su 16:00-01:00",
       "picture": "/media/maps/osm-n2840313640.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n391946425",
@@ -473,10 +474,10 @@
       "website": "http://baranbryggeri.no/",
       "openingHours": "Mo-Th 18:00-01:30, Fr,Sa 18:00-02:30; Su off",
       "picture": "https://live.staticflickr.com/2852/9714588949_2de278b7ea_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n3946005921",
@@ -490,10 +491,10 @@
       "website": "https://www.logen-teater.no/",
       "openingHours": "Tu-Th 19:00-01:30; Fr-Sa 19:00-03:00",
       "picture": "/media/maps/osm-n3946005921.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n1255229011",
@@ -507,10 +508,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n1255229011.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n5679328066",
@@ -524,10 +525,10 @@
       "website": null,
       "openingHours": "Mo-Th 18:00-01:00; Fr-Sa 18:00-02:30",
       "picture": "https://upload.wikimedia.org/wikipedia/commons/9/91/Dark_and_Stormy%2C_Kong_Oscars_gate_12%2C_Bergen.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-w126752893",
@@ -541,10 +542,10 @@
       "website": "https://kvarteret.no/",
       "openingHours": "Mo-We 11:30-01:00; Th-Fr 11:30-03:30; Sa 14:00-03:30",
       "picture": "https://commons.wikimedia.org/wiki/Special:FilePath/Det_Akademiske_Kvarter.JPG?width=800",
+      "pictureSource": "wikidata",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "wikidata"
+      "curated": false
     },
     {
       "id": "osm-n2840313645",
@@ -558,10 +559,10 @@
       "website": null,
       "openingHours": null,
       "picture": "https://live.staticflickr.com/8260/29089080373_946cd5930d_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n3964625290",
@@ -575,10 +576,10 @@
       "website": null,
       "openingHours": "Mo-Th,Su 13:00-01:00; Fr-Sa 13:00-02:00",
       "picture": "/media/maps/osm-n3964625290.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3934152281",
@@ -592,10 +593,10 @@
       "website": "https://www.duggfriskbergen.no/",
       "openingHours": "Mo-Th 15:00-00:00; Fr-Sa 11:00-02:30, Su off",
       "picture": "https://static.wixstatic.com/media/833181_f667d6bca3c047a1a3f22971a8eae80e~mv2.jpg/v1/fill/w_2500,h_1666,al_c/833181_f667d6bca3c047a1a3f22971a8eae80e~mv2.jpg",
+      "pictureSource": "website",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "website"
+      "curated": false
     },
     {
       "id": "osm-n3962005385",
@@ -609,10 +610,10 @@
       "website": "https://www.dunsminibar.no/",
       "openingHours": "Mo off; Tu-Th 20:00-00:00; Fr 19:00-01:00; Sa 13:00-01:00; Su 14:00-00:00",
       "picture": "/media/maps/osm-n3962005385.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2839876145",
@@ -626,10 +627,10 @@
       "website": null,
       "openingHours": "Mo 12:00-01:00; Tu-Sa 12:00-02:30; Su 14:00-01:00",
       "picture": "https://live.staticflickr.com/3647/3338859731_52a98424f2.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n3126036068",
@@ -643,10 +644,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n3126036068.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n9809654542",
@@ -660,10 +661,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n9809654542.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3946115814",
@@ -677,10 +678,10 @@
       "website": "https://www.felixbergen.no/",
       "openingHours": "Mo-Sa 12:00-03:30",
       "picture": "http://static1.squarespace.com/static/6216575015d099246151822f/t/68932e036f6e084af57f2e22/1754476035009/OKO_3928.jpg?format=1500w",
+      "pictureSource": "website",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "website"
+      "curated": false
     },
     {
       "id": "osm-n1404297649",
@@ -694,10 +695,10 @@
       "website": "https://www.feliz.no/",
       "openingHours": "Fr-Sa 23:00-02:30",
       "picture": "/media/maps/osm-n1404297649.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3934152261",
@@ -711,10 +712,10 @@
       "website": "http://www.femteiandre.no/",
       "openingHours": "Mo-Th 18:00-01:00; Fr-Sa 18:00-02:00",
       "picture": "/media/maps/osm-n3934152261.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2839876146",
@@ -728,10 +729,10 @@
       "website": null,
       "openingHours": "Mo-Fr 15:00-02:30; Sa-Su 12:00-02:30",
       "picture": "/media/maps/osm-n2839876146.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3126017837",
@@ -745,10 +746,10 @@
       "website": null,
       "openingHours": "24/7",
       "picture": "/media/maps/osm-n3126017837.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n391946421",
@@ -762,10 +763,10 @@
       "website": "https://www.fincken.no/",
       "openingHours": "Mo off; We-Th 19:00-01:30; Fr-Sa 20:00-03:00; Su off",
       "picture": "https://live.staticflickr.com/3161/2889084351_a5e956037e_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n2839876147",
@@ -779,10 +780,10 @@
       "website": "https://www.ricks.no/?page_id=62",
       "openingHours": "Mo-Su 14:00-03:00",
       "picture": "/media/maps/osm-n2839876147.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2698251002",
@@ -796,10 +797,10 @@
       "website": "https://www.zabr.no/barer/flying-dutchman/",
       "openingHours": "Mo-Su 15:00-02:30",
       "picture": "/media/maps/osm-n2698251002.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3993462188",
@@ -813,10 +814,10 @@
       "website": null,
       "openingHours": "Mo-Th 15:00-01:00; Fr 15:00-02:00; Sa 12:00-02:00; Su 15:00-01:00",
       "picture": "/media/maps/osm-n3993462188.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n5497438578",
@@ -830,10 +831,10 @@
       "website": null,
       "openingHours": "Mo-Tu 19:00-01:00; We-Th 17:00-01:00; Fr 17:00-02:00; Sa 16:00-02:00; Su 19:00-01:00",
       "picture": "/media/maps/osm-n5497438578.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3993462189",
@@ -847,10 +848,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n3993462189.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3942161690",
@@ -864,10 +865,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n3942161690.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n391946419",
@@ -881,10 +882,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n391946419.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n1404299330",
@@ -898,10 +899,10 @@
       "website": "https://www.heidisbierbar.no/byer/bergen/",
       "openingHours": "Mo-Sa 17:00-02:30; Su 20:00-02:30",
       "picture": "/media/maps/osm-n1404299330.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n4583745061",
@@ -915,10 +916,10 @@
       "website": null,
       "openingHours": "Th 18:00-00:00; Fr-Sa 18:00-03:00",
       "picture": "https://commons.wikimedia.org/wiki/Special:FilePath/Hellion_Rock_%26_Metal_Pub_Bergen.jpg?width=800",
+      "pictureSource": "osm",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "osm"
+      "curated": false
     },
     {
       "id": "osm-n3942161693",
@@ -932,10 +933,10 @@
       "website": null,
       "openingHours": "Su,Mo 17:00-24:00, Tu-Th 15:00-01:00, Fr,Sa 15:00-02:00",
       "picture": "/media/maps/osm-n3942161693.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3988515649",
@@ -949,10 +950,10 @@
       "website": null,
       "openingHours": "Mo,Tu 15:00-24:00, We,Th 15:00-01:00, Fr,Sa 13:00-02:00, Su 13:00-24:00",
       "picture": "/media/maps/osm-n3988515649.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3966509360",
@@ -966,10 +967,10 @@
       "website": "https://www.facebook.com/Integrerbar/",
       "openingHours": "Tu 16:00-00:00; Th 16:00-00:00; Fr 16:00-00:00",
       "picture": "/media/maps/osm-n3966509360.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3964625307",
@@ -983,10 +984,10 @@
       "website": null,
       "openingHours": "Mo-Sa 12:00-02:30; Su 13:00-01:00",
       "picture": "https://live.staticflickr.com/8044/29123480765_b031ee123b_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n4146265417",
@@ -1000,10 +1001,10 @@
       "website": "https://www.jacobaall.no/bergen/",
       "openingHours": "Mo-We 11:00-01:30; Th-Sa 11:00-02:30; Su 12:00-01:30",
       "picture": "/media/maps/osm-n4146265417.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n4976732477",
@@ -1017,10 +1018,10 @@
       "website": "https://www.colonialen.no/jest",
       "openingHours": "Mo-We 13:00-23:00, Th,Fr 13:00-01:00, Sa 12:00-01:00, Su 13:00-21:00",
       "picture": "/media/maps/osm-n4976732477.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n5137307839",
@@ -1034,10 +1035,10 @@
       "website": "https://www.kavaroofgarden.no/",
       "openingHours": null,
       "picture": "/media/maps/osm-n5137307839.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n1706384194",
@@ -1051,10 +1052,10 @@
       "website": null,
       "openingHours": "We 18:00-00:00; Th 18:00-01:00; Fr-Sa 07:00-03:00; Su 18:00-12:00",
       "picture": "/media/maps/osm-n1706384194.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3946010583",
@@ -1068,10 +1069,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n3946010583.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n8285858585",
@@ -1085,10 +1086,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n8285858585.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n12238952130",
@@ -1102,10 +1103,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n12238952130.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n4099728385",
@@ -1119,10 +1120,10 @@
       "website": "https://www.kongoscar.no/",
       "openingHours": "Mo-Th 12:00-01:30; Fr-Sa 12:00-02:30; Su 12:00-01:30",
       "picture": "https://kongoscar.no/wp-content/uploads/2025/07/home-cover.webp",
+      "pictureSource": "website",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "website"
+      "curated": false
     },
     {
       "id": "osm-n2840313655",
@@ -1136,10 +1137,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n2840313655.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3934152280",
@@ -1153,10 +1154,10 @@
       "website": null,
       "openingHours": "Tu-We 16:00-24:00; Th 13:00-24:00; Fr 13:00-24:00; Sa 00:00-01:00, 13:00-24:00, Su 00:00-01:00, 14:00-24:00",
       "picture": "https://live.staticflickr.com/367/20372446042_4ce29b8bb6_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n3938248122",
@@ -1170,10 +1171,10 @@
       "website": "https://www.kronbar.no/",
       "openingHours": "Mo,Fr 11:00-15:00; Tu,Th 18:00-00:00",
       "picture": "/media/maps/osm-n3938248122.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n5401407206",
@@ -1187,10 +1188,10 @@
       "website": "http://kurerbar.b.uib.no",
       "openingHours": "Th-Fr 17:00-00:00",
       "picture": "/media/maps/osm-n5401407206.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n6365963180",
@@ -1204,10 +1205,10 @@
       "website": null,
       "openingHours": "Mo-Th 08:00-24:00, Fr 08:00-01:00, Sa 16:00-01:00",
       "picture": "/media/maps/osm-n6365963180.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n5010898145",
@@ -1221,10 +1222,10 @@
       "website": null,
       "openingHours": "Mo-Th 17:00-01:00; Sa-Su 17:00-02:30; Su 17:00-01:00",
       "picture": "/media/maps/osm-n5010898145.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3946005945",
@@ -1238,10 +1239,10 @@
       "website": "https://www.facebook.com/lillebar/",
       "openingHours": "Tu 20:00-03:00; Th-Sa 20:00-03:00",
       "picture": "https://live.staticflickr.com/4001/4390667762_4f11d9121c_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n4109872705",
@@ -1255,10 +1256,10 @@
       "website": "https://www.olebullhuset.no/nattklubben/",
       "openingHours": "23:00-03:30",
       "picture": "https://live.staticflickr.com/3322/3574909579_ac5718b511_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n1404299059",
@@ -1272,10 +1273,10 @@
       "website": "https://www.logehaven.no/",
       "openingHours": "Mo-We 12:00-23:00, Th-Sa 12:00-03:30, Su 12:00-22:00",
       "picture": "https://res.cloudinary.com/bergenske/image/upload/t_side-by-side/v1712055391/Places-to-eat-and-drink-near-me/Restaurants/Logehaven-Restaurant/norway-bergen-places-to-eat-and-drink-near-me-pub-bar-restaurants-food-and-wine-spisesteder-restauranter-utested-2.jpg",
+      "pictureSource": "website",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "website"
+      "curated": false
     },
     {
       "id": "osm-n6379628329",
@@ -1289,10 +1290,10 @@
       "website": "https://loulou.no/bergen",
       "openingHours": null,
       "picture": "https://live.staticflickr.com/7039/6878984198_e605260abb_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n5087313732",
@@ -1306,10 +1307,10 @@
       "website": "https://www.magdabar.no/",
       "openingHours": "Mo-Tu 17:00-01:30; Fr-Sa 17:00-02:30; Su 17:00-01:00",
       "picture": "http://static1.squarespace.com/static/66969466ace8c42b27449d3a/t/66980dd8fc492f139a671080/1721289102857/Skjermbilde+2024-07-17+kl.+20.30.30.jpg?format=1500w",
+      "pictureSource": "website",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "website"
+      "curated": false
     },
     {
       "id": "osm-n3946115815",
@@ -1323,10 +1324,10 @@
       "website": null,
       "openingHours": "Mo-We 12:00-01:30; Th-Sa 12:00-03:00; Su 12:00-01:30",
       "picture": "/media/maps/osm-n3946115815.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n6055511947",
@@ -1340,10 +1341,10 @@
       "website": "https://www.minibarlatino.no/",
       "openingHours": "Mo-Su 21:00-03:00",
       "picture": "/media/maps/osm-n6055511947.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3988383117",
@@ -1357,10 +1358,10 @@
       "website": null,
       "openingHours": "Mo-We 16:00-01:00; Th-Sa 16:00-02:30; Su 16:00-00:00",
       "picture": "/media/maps/osm-n3988383117.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n6427726155",
@@ -1374,10 +1375,10 @@
       "website": null,
       "openingHours": null,
       "picture": "https://live.staticflickr.com/2474/4012756246_317033b19a_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n3993462196",
@@ -1391,10 +1392,10 @@
       "website": "https://www.nostressbar.no/",
       "openingHours": "Mo-Th 17:00-01:30; Fr-Sa 15:00-02:30; Su 17:00-01:00",
       "picture": "/media/maps/osm-n3993462196.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2840313642",
@@ -1408,10 +1409,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n2840313642.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n11465543381",
@@ -1425,10 +1426,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n11465543381.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-w1450090869",
@@ -1442,10 +1443,10 @@
       "website": "https://www.uib.no/en/math/56304/student-forum",
       "openingHours": null,
       "picture": "https://live.staticflickr.com/2682/4431604255_053c7f610b_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n695140320",
@@ -1459,10 +1460,10 @@
       "website": "https://portal.gastroplanner.no/p/nFYlVe/restaurant/1386",
       "openingHours": "Mo-Su 14:00-01:00",
       "picture": "https://live.staticflickr.com/5497/9714625605_4c4235c33a_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n2840313667",
@@ -1476,10 +1477,10 @@
       "website": "http://www.smauet.no/",
       "openingHours": "Mo-Th 16:00-01:00; Fr 16:00-02:00; Sa 13:00-20:00; Su 16:00-01:00",
       "picture": "/media/maps/osm-n2840313667.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n14097415911",
@@ -1493,10 +1494,10 @@
       "website": "https://programmer.bar",
       "openingHours": "Fr 16:00-00:00; We 16:00-00:00",
       "picture": "/media/maps/osm-n14097415911.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n12433354557",
@@ -1510,10 +1511,10 @@
       "website": "https://rebelsk.no/",
       "openingHours": "Tu-Sa 11:30-23:00",
       "picture": "https://live.staticflickr.com/1819/44052742451_96ac444141.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n4395908756",
@@ -1527,10 +1528,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n4395908756.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2839994024",
@@ -1544,10 +1545,10 @@
       "website": "https://www.rollogrock.no/",
       "openingHours": "Mo-Th 11:00-01:00; Fr-Sa 11:00-02:00; Su 11:00-01:00",
       "picture": "/media/maps/osm-n2839994024.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n6938903597",
@@ -1561,10 +1562,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n6938903597.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3946115817",
@@ -1578,10 +1579,10 @@
       "website": null,
       "openingHours": "Mo-Fr 13:00-02:00; Sa 13:00-02:30; Su 13:00-01:00",
       "picture": "/media/maps/osm-n3946115817.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n13596261039",
@@ -1595,10 +1596,10 @@
       "website": "https://www.siderbar.no",
       "openingHours": "Mo-Th 12:00-24:00;Fr-Sa 12:00-25:00;Su 12:00-23:00",
       "picture": "/media/maps/osm-n13596261039.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3964625340",
@@ -1612,10 +1613,10 @@
       "website": "https://www.sjoboden-bergen.no/",
       "openingHours": "Mo-Th 19:00-03:00; Fr-Su 18:00-03:00",
       "picture": "https://live.staticflickr.com/4406/36405580392_1e9c694718_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n3946010570",
@@ -1629,10 +1630,10 @@
       "website": "https://www.skipperstuenpub.no/",
       "openingHours": "Mo-Tu 11:00-00:00; We-Th 11:00-01:00; Fr-Sa 11:00-02:00; Su 12:00-01:00",
       "picture": "/media/maps/osm-n3946010570.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n7858330834",
@@ -1646,10 +1647,10 @@
       "website": null,
       "openingHours": null,
       "picture": "https://live.staticflickr.com/65535/52529150367_3d1e399772_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     },
     {
       "id": "osm-n4917722263",
@@ -1663,10 +1664,10 @@
       "website": null,
       "openingHours": "Mo 10:00-16:00, Tu,We 10:00-24:00, Th,Fr 10:00-01:00, Sa 11:00-01:00, Su 13:00-24:00",
       "picture": "/media/maps/osm-n4917722263.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n4682353961",
@@ -1680,10 +1681,10 @@
       "website": "https://www.olebullhuset.no/storm-bar/",
       "openingHours": "Mo-We 12:00-01:30; Th-Sa 12:00-02:30; Su 14:00-01:30",
       "picture": "/media/maps/osm-n4682353961.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n5931375413",
@@ -1697,10 +1698,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n5931375413.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n5010898146",
@@ -1714,10 +1715,10 @@
       "website": null,
       "openingHours": null,
       "picture": "/media/maps/osm-n5010898146.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n5864220688",
@@ -1731,10 +1732,10 @@
       "website": "www.teaterbaren.no",
       "openingHours": null,
       "picture": "/media/maps/osm-n5864220688.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3964625321",
@@ -1748,10 +1749,10 @@
       "website": null,
       "openingHours": "Mo-Th 15:00-01:00; Fr-Sa 12:00-02:00",
       "picture": "/media/maps/osm-n3964625321.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n1218983029",
@@ -1765,10 +1766,10 @@
       "website": "https://www.ricks.no/",
       "openingHours": "Fr-Sa 22:00-03:00; Su 23:00-03:00",
       "picture": "/media/maps/osm-n1218983029.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3939407090",
@@ -1782,10 +1783,10 @@
       "website": null,
       "openingHours": "Mo-Th 11:00-23:00; Fr-Sa 11:00-01:00; Su 15:00-23:00",
       "picture": "/media/maps/osm-n3939407090.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n3982428986",
@@ -1799,16 +1800,33 @@
       "website": null,
       "openingHours": "Mo-Fr 18:00-03:00; Sa 14:00-03:00; Su 18:00-03:00",
       "picture": "https://live.staticflickr.com/65535/49099541722_7943553fc5_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
+    },
+    {
+      "id": "osm-n14159664814",
+      "title": "Utpå",
+      "osmName": "Utpå",
+      "amenity": "bar",
+      "lat": 60.3920352,
+      "lon": 5.3184142,
+      "osmType": "node",
+      "osmId": 14159664814,
+      "website": null,
+      "openingHours": null,
+      "picture": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHg5Q8jlJo2ehIOhE2wirSIpqOkx5832EjFItN3t4lQzbcxcMVk12rfvOy&s=10",
+      "pictureSource": "manual",
+      "description": null,
+      "seedRating": null,
+      "curated": false
     },
     {
       "id": "osm-n4046551027",
       "title": "Vaskeriet",
       "osmName": "Vaskeriet",
-      "amenity": "pub",
+      "amenity": "bar",
       "lat": 60.391533,
       "lon": 5.319881,
       "osmType": "node",
@@ -1816,10 +1834,10 @@
       "website": "https://www.vaskerietbar.no/",
       "openingHours": "Th-Sa 22:00-02:30",
       "picture": "http://static1.squarespace.com/static/66969466ace8c42b27449d3a/t/6698cb6fb070ad06b9c3f0b1/1721289588188/dansegulv.jpg?format=1500w",
+      "pictureSource": "website",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "website"
+      "curated": false
     },
     {
       "id": "osm-n3964625272",
@@ -1833,10 +1851,10 @@
       "website": null,
       "openingHours": "Mo-Th 15:00-24:00, Fr-Sa 15:00-26:00, Su 17:00-24:00",
       "picture": "/media/maps/osm-n3964625272.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2436841558",
@@ -1850,10 +1868,10 @@
       "website": "http://www.victoriabergen.no/",
       "openingHours": "We 16:00-01:00; Th-Sa 16:00-03:00",
       "picture": "/media/maps/osm-n2436841558.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n4608599689",
@@ -1867,10 +1885,10 @@
       "website": "https://www.vinylbar.no/",
       "openingHours": "Mo-Th 16:00-01:30; Fr-Sa 15:00-02:30; Su 16:00-01:00",
       "picture": "http://static1.squarespace.com/static/66969466ace8c42b27449d3a/t/6696ca124ccfa276cefe22fc/1721160472262/Bargruppen_Vinyl_Lokalene_17_SF2017.jpg?format=1500w",
+      "pictureSource": "website",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "website"
+      "curated": false
     },
     {
       "id": "osm-n3152060411",
@@ -1884,27 +1902,27 @@
       "website": null,
       "openingHours": "Su,Mo 12:00-22:30, Tu-Th 12:00-00:30, Fr,Sa 12:00-02:30",
       "picture": "/media/maps/osm-n3152060411.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n2839994028",
       "title": "Wave Fun Pub & Bar",
       "osmName": "Wave Fun Pub & Bar",
       "amenity": "pub",
-      "lat": 60.395155,
-      "lon": 5.325066,
+      "lat": 60.3951428,
+      "lon": 5.3250583,
       "osmType": "node",
       "osmId": 2839994028,
       "website": "https://www.zabr.no/barer/wave/",
       "openingHours": "We-Th 20:00-02:30; Fr-Sa 17:00-02:30",
       "picture": "/media/maps/osm-n2839994028.png",
+      "pictureSource": "map",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "map"
+      "curated": false
     },
     {
       "id": "osm-n4099980700",
@@ -1918,10 +1936,10 @@
       "website": "www.oestre.no",
       "openingHours": null,
       "picture": "https://live.staticflickr.com/65535/52041254332_a228755f6f_b.jpg",
+      "pictureSource": "openverse",
       "description": null,
       "seedRating": null,
-      "curated": false,
-      "pictureSource": "openverse"
+      "curated": false
     }
   ]
 }
