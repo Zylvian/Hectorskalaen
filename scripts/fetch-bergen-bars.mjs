@@ -62,7 +62,11 @@ async function fetchOverpass() {
     try {
       const response = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent":
+            "Hectorskalaen/1.0 (https://github.com/Zylvian/Hectorskalaen; bar catalog refresh)",
+        },
         body: `data=${encodeURIComponent(QUERY)}`,
       });
       if (!response.ok) {
