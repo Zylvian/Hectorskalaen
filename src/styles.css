@@ -1241,12 +1241,27 @@ body {
 
 .faq-answer {
   padding: 16px 18px 18px;
+  display: grid;
+  gap: 14px;
   color: var(--text-muted);
   line-height: 1.65;
 }
 
 .faq-answer p {
   margin: 0;
+}
+
+.faq-answer img {
+  display: block;
+  width: 100%;
+  max-width: 28rem;
+  height: auto;
+  border-radius: 14px;
+  border: 1px solid var(--border-subtle);
+}
+
+.faq-answer a {
+  color: var(--accent);
 }
 
 .game-area {
