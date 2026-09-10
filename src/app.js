@@ -622,16 +622,18 @@
     const own = Boolean(item.own);
     const color = ratingColor(item.score);
     return `<li>
-          <span class="comment-score" style="--score-color:${color};--overlay-glow:${color}" aria-label="${item.score} av 10">
-            <span class="comment-score-number">${item.score}</span>
-            <span class="comment-score-label">/10</span>
-          </span>
-          <p class="comment-text">${escapeHtml(item.comment)}</p>
-          <div class="comment-votes">
-            <button type="button" class="comment-vote comment-vote--up${upActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="1" aria-pressed="${upActive ? "true" : "false"}" aria-label="Like, ${up}" ${own ? "disabled title=\"Du kan ikke like din egen kommentar\"" : ""}>↑ <span class="comment-vote-count">${up}</span></button>
-            <button type="button" class="comment-vote comment-vote--down${downActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="-1" aria-pressed="${downActive ? "true" : "false"}" aria-label="Dislike, ${down}" ${own ? "disabled title=\"Du kan ikke dislike din egen kommentar\"" : ""}>↓ <span class="comment-vote-count">${down}</span></button>
-            ${own ? `<p class="comment-own">Din kommentar</p>` : ""}
+          <div class="comment-head">
+            <span class="comment-score" style="--score-color:${color};--overlay-glow:${color}" aria-label="${item.score} av 10">
+              <span class="comment-score-number">${item.score}</span>
+              <span class="comment-score-label">/10</span>
+            </span>
+            <div class="comment-votes">
+              <button type="button" class="comment-vote comment-vote--up${upActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="1" aria-pressed="${upActive ? "true" : "false"}" aria-label="Like, ${up}" ${own ? "disabled title=\"Du kan ikke like din egen kommentar\"" : ""}>↑ <span class="comment-vote-count">${up}</span></button>
+              <button type="button" class="comment-vote comment-vote--down${downActive}" data-comment-id="${escapeHtml(item.id)}" data-vote="-1" aria-pressed="${downActive ? "true" : "false"}" aria-label="Dislike, ${down}" ${own ? "disabled title=\"Du kan ikke dislike din egen kommentar\"" : ""}>↓ <span class="comment-vote-count">${down}</span></button>
+              ${own ? `<p class="comment-own">Din kommentar</p>` : ""}
+            </div>
           </div>
+          <p class="comment-text">${escapeHtml(item.comment)}</p>
         </li>`;
   }
 
@@ -695,23 +697,27 @@
         <fieldset class="rate-scale">
           <legend>${mine ? `Du ga ${mine.score}/10 — endre stemmen eller kommentaren` : "Gi en score (1 = friskt, 10 = piss)"}</legend>
           <div class="rate-buttons"></div>
-          <label class="comment-field">
-            <span>Valgfri kommentar</span>
-            <textarea id="rateComment" maxlength="${COMMENT_MAX}" rows="3" placeholder="F.eks. Kjellerlukt ved doene.">${escapeHtml(mine?.comment || "")}</textarea>
-            <small id="commentCount">0/${COMMENT_MAX}</small>
-          </label>
-          <button type="button" class="btn-ghost" id="saveRating">${mine ? "Oppdater stemme" : "Lagre stemme"}</button>
         </fieldset>
+      </div>
+      <section class="dialog-comments">
+        <label class="comment-field">
+          <span>Valgfri kommentar</span>
+          <textarea id="rateComment" maxlength="${COMMENT_MAX}" rows="3" placeholder="F.eks. Kjellerlukt ved doene.">${escapeHtml(mine?.comment || "")}</textarea>
+          <small id="commentCount">0/${COMMENT_MAX}</small>
+        </label>
+        <button type="button" class="btn-ghost" id="saveRating">${mine ? "Oppdater stemme" : "Lagre stemme"}</button>
         <p class="rate-status" id="rateStatus"></p>
         <section class="comment-section" aria-label="Kommentarer">
-          <h3>Kommentarer</h3>
-          <div class="comment-sort" role="group" aria-label="Sorter kommentarer">
-            <button type="button" class="comment-sort-btn${commentSort === "upvotes" ? " is-active" : ""}" data-comment-sort="upvotes">Flest likes</button>
-            <button type="button" class="comment-sort-btn${commentSort === "newest" ? " is-active" : ""}" data-comment-sort="newest">Nyeste</button>
+          <div class="comment-section-head">
+            <h3>Kommentarer</h3>
+            <div class="comment-sort" role="group" aria-label="Sorter kommentarer">
+              <button type="button" class="comment-sort-btn${commentSort === "upvotes" ? " is-active" : ""}" data-comment-sort="upvotes">Flest likes</button>
+              <button type="button" class="comment-sort-btn${commentSort === "newest" ? " is-active" : ""}" data-comment-sort="newest">Nyeste</button>
+            </div>
           </div>
           ${commentsHtml(stats.comments)}
         </section>
-      </div>
+      </section>
     `;
     const media = dialogBody.querySelector(".dialog-media");
     media.appendChild(createMedia(bar, stats));
