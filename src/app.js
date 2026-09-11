@@ -454,7 +454,7 @@
 
   function usesMapPreviewTap() {
     return (
-      window.matchMedia("(hover: none), (pointer: coarse)").matches ||
+      window.matchMedia("(hover: none), (pointer: coarse), (max-width: 760px)").matches ||
       (typeof L !== "undefined" && Boolean(L.Browser?.mobile))
     );
   }
