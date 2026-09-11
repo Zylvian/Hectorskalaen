@@ -452,33 +452,67 @@
     mapMarkers = [];
   }
 
+  function usesMapPreviewTap() {
+    return (
+      window.matchMedia("(hover: none), (pointer: coarse), (max-width: 760px)").matches ||
+      (typeof L !== "undefined" && Boolean(L.Browser?.mobile))
+    );
+  }
+
+  function closeMapOverlays() {
+    if (!map) return;
+    map.closePopup();
+    mapMarkers.forEach((marker) => {
+      if (typeof marker.closeTooltip === "function") marker.closeTooltip();
+    });
+  }
+
+  function bindMapPreviewOpener(el) {
+    if (!el || el.dataset.mapPreviewBound === "1") return;
+    el.dataset.mapPreviewBound = "1";
+    const openFromPreview = (event) => {
+      const opener = event.target.closest("[data-open-bar]");
+      if (!opener) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const id = opener.getAttribute("data-open-bar");
+      if (!id) return;
+      closeMapOverlays();
+      openBar(id);
+    };
+    el.addEventListener("click", openFromPreview, true);
+  }
+
   function mapPinIcon(bar, stats, color) {
     const label = stats.average == null ? "?" : formatAverage(stats.average);
     const selected = selectedMapBarId === bar.id ? " is-selected" : "";
     const decimal = label.includes(".") ? " map-pin--decimal" : "";
+    const tap = usesMapPreviewTap();
     return L.divIcon({
       className: "map-pin-wrap",
-      iconSize: [36, 46],
-      iconAnchor: [18, 44],
+      iconSize: tap ? [44, 56] : [36, 46],
+      iconAnchor: tap ? [22, 52] : [18, 44],
       tooltipAnchor: [0, -42],
+      popupAnchor: [0, -38],
       html: `<div class="map-pin${selected}${decimal}" data-bar-id="${escapeHtml(bar.id)}" style="--pin-color:${color}"><span>${escapeHtml(label)}</span></div>`,
     });
   }
 
   function mapHoverHtml(bar, stats, color) {
     const picture = bar.picture
-      ? `<img class="map-hover-image" src="${escapeHtml(bar.picture)}" alt="${escapeHtml(bar.title)}" loading="lazy" referrerpolicy="no-referrer">`
+      ? `<img class="map-hover-image" src="${escapeHtml(bar.picture)}" alt="${escapeHtml(bar.title)}" loading="lazy" referrerpolicy="no-referrer" draggable="false">`
       : `<div class="map-hover-image map-hover-image--empty">${escapeHtml(initial(bar.title))}</div>`;
     const votes =
       stats.average == null
         ? "Ingen score ennå"
         : `${stats.count} ${stats.count === 1 ? "stemme" : "stemmer"}`;
-    return `<div class="map-hover-card">
+    return `<div class="map-hover-card" data-open-bar="${escapeHtml(bar.id)}">
       ${picture}
       <div class="map-hover-copy">
         <strong>${escapeHtml(bar.title)}</strong>
         <span class="map-hover-score" style="color:${color}">${formatAverage(stats.average)}/10</span>
-        <span class="map-hover-meta">${escapeHtml(votes)} · klikk for kommentarer</span>
+        <span class="map-hover-meta">${escapeHtml(votes)}</span>
+        <button type="button" class="map-hover-vote" data-open-bar="${escapeHtml(bar.id)}">Stem og kommenter</button>
       </div>
     </div>`;
   }
@@ -500,6 +534,7 @@
         map = L.map(el, {
           scrollWheelZoom: true,
           zoomControl: false,
+          tapHold: false,
         }).setView(MAP_DEFAULT_CENTER, MAP_DEFAULT_ZOOM);
         L.control.zoom({ position: "bottomright" }).addTo(map);
         L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
@@ -508,10 +543,12 @@
             "Tiles &copy; Esri — Source: Esri, TomTom, Garmin, FAO, NOAA, USGS",
         }).addTo(map);
       }
+      bindMapPreviewOpener(el);
       map.invalidateSize();
       clearMapMarkers();
       const filtered = filteredBars();
       const bounds = [];
+      const tapPreview = usesMapPreviewTap();
       filtered.forEach((bar) => {
         if (!Number.isFinite(bar.lat) || !Number.isFinite(bar.lon)) return;
         const stats = displayScore(bar);
@@ -521,17 +558,30 @@
           riseOnHover: true,
           keyboard: true,
         }).addTo(map);
-        marker.bindTooltip(mapHoverHtml(bar, stats, color), {
-          direction: "top",
-          opacity: 1,
-          sticky: false,
-          interactive: false,
-          className: "map-hover-tooltip",
-        });
-        marker.on("click", () => {
-          marker.closeTooltip();
-          openBar(bar.id);
-        });
+        const preview = mapHoverHtml(bar, stats, color);
+        if (tapPreview) {
+          marker.bindPopup(preview, {
+            className: "map-hover-popup",
+            closeButton: true,
+            autoPan: true,
+            maxWidth: 260,
+            minWidth: 220,
+            autoClose: true,
+            closeOnClick: true,
+          });
+        } else {
+          marker.bindTooltip(preview, {
+            direction: "top",
+            opacity: 1,
+            sticky: false,
+            interactive: true,
+            className: "map-hover-tooltip",
+          });
+          marker.on("click", () => {
+            marker.closeTooltip();
+            openBar(bar.id);
+          });
+        }
         mapMarkers.push(marker);
         bounds.push([bar.lat, bar.lon]);
       });
@@ -549,10 +599,13 @@
         mapFitKey = fitKey;
       });
       if (resultsSummary) {
+        const hint = tapPreview
+          ? "Trykk på en pin for forhåndsvisning, deretter Stem og kommenter."
+          : "Hold over en pin for bilde og score, eller klikk for å stemme.";
         resultsSummary.textContent =
           rankingFilter === "rated"
-            ? `${filtered.length} vurderte barer på kartet. Hold over en pin for bilde og score.`
-            : `${filtered.length} barer uten score på kartet. Hold over en pin for bilde.`;
+            ? `${filtered.length} vurderte barer på kartet. ${hint}`
+            : `${filtered.length} barer uten score på kartet. ${hint}`;
       }
     };
 
@@ -660,6 +713,7 @@
   function openBar(barId, { reopen = true } = {}) {
     const bar = bars.find((item) => item.id === barId);
     if (!bar || !barDialog || !dialogBody) return;
+    closeMapOverlays();
     if (reopen) hiddenCommentsOpen = false;
     selectedMapBarId = barId;
     document.querySelectorAll(".map-pin").forEach((el) => {
