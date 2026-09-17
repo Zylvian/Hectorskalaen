@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Scan OpenStreetMap for bars, pubs, nightclubs and beer gardens in Bergen,
- * then merge them with the original curated Hectorskalaen entries.
+ * Scan OpenStreetMap for bars, pubs, nightclubs, beer gardens and karaoke
+ * bars in Bergen, then merge them with the original curated Hectorskalaen entries.
  *
  * Usage:
  *   node scripts/fetch-bergen-bars.mjs
@@ -18,7 +18,12 @@ const OVERPASS_URLS = [
   "https://overpass-api.de/api/interpreter",
   "https://lz4.overpass-api.de/api/interpreter",
 ];
-const QUERY = `[out:json][timeout:60];(nwr["amenity"~"^(bar|pub|nightclub|biergarten)$"](${BBOX}););out center tags;`;
+const QUERY = `[out:json][timeout:60];(nwr["amenity"~"^(bar|pub|nightclub|biergarten|karaoke_box)$"](${BBOX}););out center tags;`;
+
+/** OSM names that should show a cleaner title in the catalog. */
+const DISPLAY_NAME = {
+  "SYNG på bergens": "SYNG på bergensk",
+};
 
 /** Original titles → OSM names so editorial photos/copy survive a refresh. */
 const CURATED_OSM_NAME = {
@@ -106,9 +111,10 @@ function toBar(element) {
   const amenity = tags.amenity || "bar";
   return {
     id: osmId(element),
-    title: tags.name,
+    title: DISPLAY_NAME[tags.name] || tags.name,
     osmName: tags.name,
-    amenity: amenity === "biergarten" ? "pub" : amenity,
+    amenity:
+      amenity === "biergarten" ? "pub" : amenity === "karaoke_box" ? "bar" : amenity,
     lat,
     lon,
     osmType: element.type,
@@ -210,6 +216,7 @@ async function main() {
         previousPictures.set(bar.id, {
           picture: bar.picture,
           pictureSource: bar.pictureSource || null,
+          osmName: bar.osmName || bar.title || "",
         });
       }
     }
@@ -223,8 +230,15 @@ async function main() {
   });
 
   for (const bar of fromOsm) {
-    if (!bar.picture && previousPictures.has(bar.id)) {
-      Object.assign(bar, previousPictures.get(bar.id));
+    const previous = previousPictures.get(bar.id);
+    if (!bar.picture && previous) {
+      const sameName =
+        String(previous.osmName || "").toLowerCase() ===
+        String(bar.osmName || bar.title || "").toLowerCase();
+      if (sameName) {
+        bar.picture = previous.picture;
+        bar.pictureSource = previous.pictureSource;
+      }
     }
   }
 

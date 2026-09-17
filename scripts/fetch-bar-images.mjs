@@ -189,7 +189,7 @@ async function acceptPicture(bar, hit, usedUrls) {
 }
 
 async function fromOverpass(bars) {
-  const query = `[out:json][timeout:60];(nwr["amenity"~"^(bar|pub|nightclub|biergarten)$"](60.29,5.14,60.54,5.55););out center tags;`;
+  const query = `[out:json][timeout:60];(nwr["amenity"~"^(bar|pub|nightclub|biergarten|karaoke_box)$"](60.29,5.14,60.54,5.55););out center tags;`;
   const endpoints = [
     "https://overpass-api.de/api/interpreter",
     "https://lz4.overpass-api.de/api/interpreter",

@@ -11,7 +11,7 @@ The original editorial list, photos, and descriptions are kept in the repository
 The site is user-driven:
 
 1. **Ratings** — visitors give 1–10. You can change your own vote; it updates the average instead of stacking duplicates.
-2. **Bars come from OpenStreetMap** — not from a submit form. A scan of Bergen (`amenity=bar|pub|nightclub|biergarten`) is stored as `src/bars.json`. Missing venues belong on [OpenStreetMap](https://www.openstreetmap.org), then a catalog refresh picks them up. That avoids spam and keeps names/coordinates in one place.
+2. **Bars come from OpenStreetMap** — not from a submit form. A scan of Bergen (`amenity=bar|pub|nightclub|biergarten|karaoke_box`) is stored as `src/bars.json`. Missing venues belong on [OpenStreetMap](https://www.openstreetmap.org), then a catalog refresh picks them up. That avoids spam and keeps names/coordinates in one place.
 3. **Persistence** — vote totals need a tiny always-on database. The API is built for **[Turso](https://turso.tech)** (libSQL/SQLite): free tier, no sleep/idle, no cold start, plenty of room for this dataset. Locally, votes are stored in `data/ratings.json` so you can run the app without an account.
 
 Supabase and Neon were not used because their free tiers pause. Turso keeps the database as a file, so it stays awake.
