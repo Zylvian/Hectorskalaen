@@ -1431,6 +1431,11 @@ body {
     padding-top: 14px;
   }
 
+  .comment-field textarea {
+    min-height: 10rem;
+    height: 10rem;
+  }
+
   .bar-card--list .bar-card-button {
     flex-direction: column;
   }
@@ -1718,6 +1723,11 @@ body {
     flex: 1 1 auto;
     min-height: 0;
     height: auto;
+  }
+
+  .comment-field textarea {
+    min-height: 12rem;
+    height: 12rem;
   }
 }
 
