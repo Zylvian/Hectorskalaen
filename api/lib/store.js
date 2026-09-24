@@ -75,7 +75,13 @@ function seedsPath() {
 
 async function loadCatalog() {
   if (catalogCache) return catalogCache;
-  const raw = JSON.parse(await readFile(seedsPath(), "utf8"));
+  let raw;
+  try {
+    raw = JSON.parse(await readFile(seedsPath(), "utf8"));
+  } catch {
+    // Pages Functions have no local filesystem; the JSON is bundled instead.
+    raw = require("../data/seeds.json");
+  }
   catalogCache = {
     ids: new Set(raw.ids),
     seeds: raw.seeds || [],
@@ -227,15 +233,24 @@ function createJsonBackend(filePath) {
         votes: Array.isArray(raw.votes) ? raw.votes : [],
       };
     } catch (err) {
-      if (err.code !== "ENOENT") throw err;
-      mem = { ratings: [], votes: [] };
+      const message = String(err && err.message ? err.message : err);
+      const unsupported = /not implemented/i.test(message);
+      if (err.code !== "ENOENT" && !unsupported) throw err;
+      if (!unsupported || (mem.ratings.length === 0 && (mem.votes || []).length === 0)) {
+        mem = { ratings: [], votes: [] };
+      }
     }
     return mem;
   }
 
   async function write() {
-    await mkdir(path.dirname(filePath), { recursive: true });
-    await writeFile(filePath, `${JSON.stringify(mem, null, 2)}\n`, "utf8");
+    try {
+      await mkdir(path.dirname(filePath), { recursive: true });
+      await writeFile(filePath, `${JSON.stringify(mem, null, 2)}\n`, "utf8");
+    } catch (err) {
+      const message = String(err && err.message ? err.message : err);
+      if (!/not implemented/i.test(message)) throw err;
+    }
   }
 
   return {
