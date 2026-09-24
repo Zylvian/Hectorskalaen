@@ -372,7 +372,7 @@ function mapTursoRows(result) {
 }
 
 function createTursoBackend(url, authToken) {
-  const { createClient } = require("@libsql/client");
+  const { createClient } = require("@libsql/client/web");
   const client = createClient({ url, authToken });
   let ready = false;
 
