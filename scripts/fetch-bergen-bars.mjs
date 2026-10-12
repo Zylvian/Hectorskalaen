@@ -164,8 +164,30 @@ async function main() {
     .map(toBar)
     .filter((bar) => Number.isFinite(bar.lat) && Number.isFinite(bar.lon));
 
+  let previousBars = [];
+  let previousPictures = new Map();
+  let previousImageMeta = {};
+  try {
+    const previous = JSON.parse(await readFile(resolve(ROOT, "src/bars.json"), "utf8"));
+    previousBars = previous.bars || [];
+    previousImageMeta = {
+      imagesFetchedAt: previous.meta?.imagesFetchedAt,
+      imageSources: previous.meta?.imageSources,
+    };
+    for (const bar of previousBars) {
+      if (bar.picture) {
+        previousPictures.set(bar.id, {
+          picture: bar.picture,
+          pictureSource: bar.pictureSource || null,
+          osmName: bar.osmName || bar.title || "",
+        });
+      }
+    }
+  } catch {
+    /* first catalog write */
+  }
+
   const byName = indexByName(fromOsm);
-  const usedIds = new Set();
 
   for (const curated of original) {
     const osmName = CURATED_OSM_NAME[curated.title];
@@ -177,51 +199,34 @@ async function main() {
       match.description = curated.description || null;
       match.seedRating = curated.rating;
       match.curated = true;
-      usedIds.add(match.id);
     } else {
+      const previousMatch = previousBars.find((bar) => bar.curated && bar.title === curated.title);
       const slug = curated.title
         .toLowerCase()
         .replace(/[^a-z0-9æøå]+/gi, "-")
         .replace(/^-|-$/g, "");
       fromOsm.push({
-        id: `curated-${slug}`,
+        id: previousMatch?.id || `curated-${slug}`,
         title: curated.title,
-        osmName: null,
-        amenity: "bar",
-        lat: 60.391,
-        lon: 5.323,
-        osmType: null,
-        osmId: null,
-        website: null,
-        openingHours: null,
-        picture: curated.picture || null,
-        pictureSource: curated.picture ? "curated" : null,
+        osmName: previousMatch?.osmName || null,
+        amenity: previousMatch?.amenity || "bar",
+        lat: previousMatch?.lat ?? 60.391,
+        lon: previousMatch?.lon ?? 5.323,
+        osmType: previousMatch?.osmType ?? null,
+        osmId: previousMatch?.osmId ?? null,
+        website: previousMatch?.website || null,
+        openingHours: previousMatch?.openingHours || null,
+        picture: curated.picture || previousMatch?.picture || null,
+        pictureSource: curated.picture
+          ? "curated"
+          : previousMatch?.picture
+            ? previousMatch.pictureSource
+            : null,
         description: curated.description || null,
         seedRating: curated.rating,
         curated: true,
       });
     }
-  }
-
-  let previousPictures = new Map();
-  let previousImageMeta = {};
-  try {
-    const previous = JSON.parse(await readFile(resolve(ROOT, "src/bars.json"), "utf8"));
-    previousImageMeta = {
-      imagesFetchedAt: previous.meta?.imagesFetchedAt,
-      imageSources: previous.meta?.imageSources,
-    };
-    for (const bar of previous.bars || []) {
-      if (bar.picture) {
-        previousPictures.set(bar.id, {
-          picture: bar.picture,
-          pictureSource: bar.pictureSource || null,
-          osmName: bar.osmName || bar.title || "",
-        });
-      }
-    }
-  } catch {
-    /* first catalog write */
   }
 
   fromOsm.sort((a, b) => {
